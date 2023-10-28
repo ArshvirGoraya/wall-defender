@@ -6,6 +6,7 @@ import time
 from color_schemes import ColorScheme
 from components.wall import Wall
 from components.enemy import Enemy
+from components.ammo import Ammo
 
 pygame.init()
 
@@ -31,13 +32,12 @@ WALL_POSITION = pygame.Vector2(screen_w/2, 0)
 wall = pygame.sprite.GroupSingle()
 wall.add(
     Wall(
-        width=100,
-        height=screen_h,
         color=colors.get_wall(),
-        x=WALL_POSITION.x,   # top right
-        y=WALL_POSITION.y    # top right
+        screen=screen.get_rect()
     )
 )
+
+
 # ENEMY ###############################
 enemy = pygame.sprite.Group()
 enemy.add(
@@ -58,6 +58,22 @@ enemy.add(
         screen=screen.get_rect()
     )
 )
+# AMMO ###############################
+ammo = pygame.sprite.Group()
+
+
+def spawn_ammo() -> None:
+    ammo.add(
+        Ammo(
+            colors.get_ammo(),
+            screen.get_rect(),
+            wall.sprite.rect
+        )
+    )
+
+
+event_ammo_spawn = pygame.USEREVENT + 1
+ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
 
 # Enum: Game States
 GAME = 0
@@ -66,7 +82,6 @@ FAIL = 2
 UPGRADE = 3
 
 game_state = GAME
-
 
 clock = pygame.time.Clock()  # To limit frame rate.
 previous_time = time.time()  # For delta time (frame-rate independent).
@@ -80,10 +95,16 @@ while True:
             pygame.quit()
             quit()  # Exits while loop immediately.
 
+        if event.type == event_ammo_spawn:
+            spawn_ammo()
+
     screen.fill((colors.get_ground()))
     wall.draw(screen)
     enemy.draw(screen)
     enemy.update(delta, wall.sprite.rect)
 
+    ammo.draw(screen)
+    ammo.update(delta)
+
     pygame.display.update()
-    # clock.tick(240)  # FPS limited
+    clock.tick(60)  # FPS limited

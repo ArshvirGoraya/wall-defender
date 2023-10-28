@@ -54,7 +54,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.kill()
 
     # Movement (frame-rate independent)
-
     def move(self, delta: float) -> None:
         if self.lefty:
             self.x_pos += self.speed * delta

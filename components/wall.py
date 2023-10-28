@@ -4,17 +4,19 @@ import pygame
 class Wall(pygame.sprite.Sprite):
     health: float = 10
 
-    def __init__(self, width, height, color, x, y) -> None:
+    def __init__(self, color, screen) -> None:
         super().__init__()  # Get inherited attributes and functions.
 
-        self.width = width
-        self.height = height
         self.color = color
+        self.width = 100
+        # Height = height of screen.
+        self.height = screen.height
 
-        # Sprite requires these 2 vars at least:
-        self.image = pygame.Surface((width, height))
+        self.image = pygame.Surface((self.width, self.height))
         self.image.fill((color))
-        self.rect = self.image.get_rect(topright=(x, y))
+
+        # Position = middle of screen (horizontal).
+        self.rect = self.image.get_rect(topright=(screen.width / 2, 0))
 
     def update(self) -> None:
         self.destroy_check()
