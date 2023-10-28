@@ -7,6 +7,7 @@ from color_schemes import ColorScheme
 from components.wall import Wall
 from components.enemy import Enemy
 from components.ammo import Ammo
+from components.player import Player
 
 pygame.init()
 
@@ -23,7 +24,7 @@ screen = pygame.display.set_mode((screen_w, screen_h), pygame.RESIZABLE)
 
 # Colors
 colors = ColorScheme(ColorScheme.S_DARK)
-# colors.randomize()
+colors.randomize()
 
 
 # WALL ###############################
@@ -64,14 +65,27 @@ def spawn_ammo() -> None:
             colors.get_ammo(),
             screen.get_rect(),
             wall.sprite.rect,
-            1,  # seconds
+            random.randint(1, 10),  # seconds
         )
     )
 
 
+# Inital ammo
+for x in range(random.randint(5, 10)):
+    spawn_ammo()
+
+# PLAYER ###############################
+player = pygame.sprite.GroupSingle()
+player.add(
+    Player(
+        color=colors.get_player(),
+        screen=screen.get_rect()
+    )
+)
+
 # Timers ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
-ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
+ammo_timer = pygame.time.set_timer(event_ammo_spawn, 5000)
 
 event_enemy_spawn = pygame.USEREVENT + 2
 enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
@@ -115,6 +129,9 @@ while True:
 
     ammo.draw(screen)
     ammo.update(delta)
+
+    player.draw(screen)
+    player.update(delta)
 
     pygame.display.update()
     # clock.tick(60)  # FPS limited

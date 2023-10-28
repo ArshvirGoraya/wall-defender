@@ -59,7 +59,7 @@ class Ammo(pygame.sprite.Sprite):
 
         # Timer until despawn
         self.start_time = pygame.time.get_ticks()
-        self.end_time = self.start_time + secs + randint(0, 10)
+        self.end_time = self.start_time + secs
 
     def update(self, delta) -> None:
         self.rot(delta)
