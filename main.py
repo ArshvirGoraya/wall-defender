@@ -40,24 +40,20 @@ wall.add(
 
 # ENEMY ###############################
 enemy = pygame.sprite.Group()
-enemy.add(
-    Enemy(
-        speed=300,
-        health=10,
-        color=colors.get_enemy(),
-        lefty=False,
-        screen=screen.get_rect()
+
+
+def spawn_enemy() -> None:
+    enemy.add(
+        Enemy(
+            speed=300,
+            health=10,
+            color=colors.get_enemy(),
+            lefty=random.randint(0, 1),
+            screen=screen.get_rect()
+        )
     )
-)
-enemy.add(
-    Enemy(
-        speed=300,
-        health=10,
-        color=colors.get_enemy(),
-        lefty=True,
-        screen=screen.get_rect()
-    )
-)
+
+
 # AMMO ###############################
 ammo = pygame.sprite.Group()
 
@@ -72,8 +68,13 @@ def spawn_ammo() -> None:
     )
 
 
+# Timers ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
 ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
+
+event_enemy_spawn = pygame.USEREVENT + 2
+enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
+
 
 # Enum: Game States
 GAME = 0
@@ -91,12 +92,19 @@ while True:
     previous_time = time.time()
 
     for event in pygame.event.get():
+        # match event.type:
+        #     case pygame.QUIT:
+        #         pygame.quit()
+        #         quit()  # Exits while loop immediately.
+
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()  # Exits while loop immediately.
 
-        if event.type == event_ammo_spawn:
+        elif event.type == event_ammo_spawn:
             spawn_ammo()
+        elif event.type == event_enemy_spawn:
+            spawn_enemy()
 
     screen.fill((colors.get_ground()))
     wall.draw(screen)
