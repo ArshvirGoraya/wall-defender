@@ -63,7 +63,8 @@ def spawn_ammo() -> None:
         Ammo(
             colors.get_ammo(),
             screen.get_rect(),
-            wall.sprite.rect
+            wall.sprite.rect,
+            1,  # seconds
         )
     )
 
@@ -103,6 +104,7 @@ while True:
 
         elif event.type == event_ammo_spawn:
             spawn_ammo()
+
         elif event.type == event_enemy_spawn:
             spawn_enemy()
 
@@ -115,4 +117,4 @@ while True:
     ammo.update(delta)
 
     pygame.display.update()
-    clock.tick(60)  # FPS limited
+    # clock.tick(60)  # FPS limited

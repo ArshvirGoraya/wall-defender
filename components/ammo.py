@@ -6,7 +6,7 @@ class Ammo(pygame.sprite.Sprite):
     rotation = 0
     rotation_speed: float = 100
 
-    def __init__(self, color, screen, wall) -> None:
+    def __init__(self, color, screen, wall, secs) -> None:
         super().__init__()  # Get inherited attributes and functions.
 
         self.width = 25
@@ -57,15 +57,20 @@ class Ammo(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
+        # Timer until despawn
+        self.start_time = pygame.time.get_ticks()
+        self.end_time = self.start_time + secs + randint(0, 10)
+
     def update(self, delta) -> None:
         self.rot(delta)
-
-        # self.destroy_check()
+        self.start_time += delta
+        self.destroy_check()
 
     def rot(self, delta) -> None:
         self.rotation += self.rotation_speed * delta
         self.image = pygame.transform.rotate(self.o_image, self.rotation)
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
-    # def destroy_check(self) -> None:
-    #     pass
+    def destroy_check(self) -> None:
+        if self.start_time >= self.end_time:
+            self.kill()
