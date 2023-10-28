@@ -4,8 +4,7 @@ import pygame
 class Player(pygame.sprite.Sprite):
     health: float = 10
     speed = 250
-    velocity = pygame.Vector2(0, 0)
-    max_velocity = 200
+    running = False
 
     def __init__(self, color, screen) -> None:
         super().__init__()
@@ -45,15 +44,20 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_a]:
             direction.x += -1
 
+        self.running = keys[pygame.K_LSHIFT]
+
+        # Get Velocity
         if direction.length() > 0:
             # Normalzied movement: diagonal is not faster.
             # Delta: frame-rate independent.
-            velocity = direction.normalize() * (self.speed * delta)
+            # velocity = direction.normalize() * ((self.speed) * delta) # no specials
+            speed = self.speed
+            if self.running:
+                speed *= 2
+
+            velocity = direction.normalize() * (speed * delta)
             self.x_pos += velocity.x
             self.y_pos += velocity.y
-
-        # if direction.length() == 0:
-        #     pass
 
         # Set new position:
         self.rect = self.image.get_rect(
