@@ -134,4 +134,4 @@ while True:
     player.update(delta)
 
     pygame.display.update()
-    # clock.tick(60)  # FPS limited
+    clock.tick(60)  # FPS limited
