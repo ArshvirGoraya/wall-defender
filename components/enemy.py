@@ -5,8 +5,9 @@ from random import randint
 class Enemy(pygame.sprite.Sprite):
     WIDTH = 50
     HEIGHT = 50
+    DAMAGE = 1
 
-    def __init__(self, speed, health, color, lefty, screen) -> None:
+    def __init__(self, speed, health, color, lefty, screen, ammo_reference) -> None:
         super().__init__()  # Get inherited attributes and functions.
 
         # Defining bounding box to screen.
@@ -37,21 +38,19 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = speed
         self.health = health
 
-    def update(self, delta, wall_rect) -> None:
-        self.destroy_check(wall_rect)
+        self.ammo_ref = ammo_reference
+
+    def update(self, delta) -> None:
+        self.destroy_check()
+        self.collision_check()
         self.move(delta)
 
-    def destroy_check(self, wall_rect) -> None:
+    def collision_check(self) -> None:
+        pygame.sprite.spritecollide(self, self.ammo_ref, True)
+
+    def destroy_check(self) -> None:
         if self.health <= 0:
             self.kill()
-
-        # Destroy if collided with wall.
-        if self.lefty:
-            if self.x_pos+self.WIDTH >= wall_rect.left:
-                self.kill()
-        else:
-            if self.x_pos <= wall_rect.right:
-                self.kill()
 
     # Movement (frame-rate independent)
     def move(self, delta: float) -> None:
@@ -60,7 +59,9 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.x_pos -= self.speed * delta
 
-        self.rect.x = self.x_pos  # Avoid integer truncating
+        # Avoids integer truncating (framerate independence)
+        self.rect.x = self.x_pos
         self.rect.y = self.y_pos
 
-        # Collision checks:
+    def get_damage(self):
+        return self.DAMAGE

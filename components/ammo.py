@@ -16,19 +16,30 @@ class Ammo(pygame.sprite.Sprite):
         # Right and left of the wall: Not on the wall.
         # Also: has some padding around the screen/wall.
 
-        self.ammo_border_left = pygame.Rect(
-            screen.left + self.width,
-            screen.top + self.height,
-            wall.left - self.width,
-            screen.height - self.height
-        )
-
-        self.ammo_border_right = pygame.Rect(
-            wall.right + self.width,
-            screen.top + self.height,
-            screen.right - wall.right - self.width,
-            screen.height - self.height
-        )
+        # Spawn at random position within the given border:
+        if wall:
+            self.lefty = randint(0, 1)
+            if self.lefty:
+                self.ammo_border = pygame.Rect(
+                    screen.left + self.width,
+                    screen.top + self.height,
+                    wall.left - self.width,
+                    screen.height - self.height
+                )
+            else:
+                self.ammo_border = pygame.Rect(
+                    wall.right + self.width,
+                    screen.top + self.height,
+                    screen.right - wall.right - self.width,
+                    screen.height - self.height
+                )
+        else:
+            self.ammo_border = pygame.Rect(
+                screen.left + self.width,
+                screen.top + self.height,
+                screen.right - self.width,
+                screen.height - self.height
+            )
 
         self.color = color
 
@@ -39,21 +50,10 @@ class Ammo(pygame.sprite.Sprite):
         self.image.fill((self.color))
         self.o_image = self.image.copy()  # Keep reference to original image.
 
-        # Spawn at random position within the given border:
-        self.lefty = randint(0, 1)
-
-        if self.lefty:
-
-            self.x = randint(self.ammo_border_left.left,
-                             self.ammo_border_left.right)
-            self.y = randint(self.ammo_border_left.top,
-                             self.ammo_border_left.bottom)
-
-        else:
-            self.x = randint(self.ammo_border_right.left,
-                             self.ammo_border_right.right)
-            self.y = randint(self.ammo_border_right.top,
-                             self.ammo_border_right.bottom)
+        self.x = randint(self.ammo_border.left,
+                         self.ammo_border.right)
+        self.y = randint(self.ammo_border.top,
+                         self.ammo_border.bottom)
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
@@ -62,15 +62,17 @@ class Ammo(pygame.sprite.Sprite):
         self.end_time = self.start_time + secs
 
     def update(self, delta) -> None:
-        self.rot(delta)
+        # self.rotate(delta)
         self.start_time += delta
         self.destroy_check()
 
-    def rot(self, delta) -> None:
+    def rotate(self, delta) -> None:
         self.rotation += self.rotation_speed * delta
         self.image = pygame.transform.rotate(self.o_image, self.rotation)
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
     def destroy_check(self) -> None:
+        # pygame.sprite.spritecollide(self, )
+
         if self.start_time >= self.end_time:
             self.kill()

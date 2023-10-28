@@ -5,8 +5,9 @@ class Player(pygame.sprite.Sprite):
     health: float = 10
     speed = 250
     running = False
+    ammo_count: int = 0
 
-    def __init__(self, color, screen) -> None:
+    def __init__(self, color, screen, ammo_reference, enemy_reference) -> None:
         super().__init__()
 
         self.color = color
@@ -22,9 +23,22 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(
             center=(self.x_pos, self.y_pos))
 
+        self.ammo_ref = ammo_reference
+        self.enemy_ref = enemy_reference
+
     def update(self, delta) -> None:
         self.destroy_check()
+        self.collision_check()
         self.movement(delta)
+
+    def collision_check(self) -> None:
+        for ammo in pygame.sprite.spritecollide(self, self.ammo_ref, True):
+            self.ammo_count += 1
+            # print(self.ammo_count)
+
+        for enemy in pygame.sprite.spritecollide(self, self.enemy_ref, True):
+            self.health -= enemy.get_damage()
+            # print("Player Health: ", self.health)
 
     def destroy_check(self) -> None:
         if self.health <= 0:

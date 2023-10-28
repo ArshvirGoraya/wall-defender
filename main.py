@@ -26,21 +26,21 @@ screen = pygame.display.set_mode((screen_w, screen_h), pygame.RESIZABLE)
 colors = ColorScheme(ColorScheme.S_DARK)
 colors.randomize()
 
+# Groups: ###############################
+wall = pygame.sprite.GroupSingle()
+enemy = pygame.sprite.Group()
+ammo = pygame.sprite.Group()
+player = pygame.sprite.GroupSingle()
 
 # WALL ###############################
-WALL_POSITION = pygame.Vector2(screen_w/2, 0)
-
-wall = pygame.sprite.GroupSingle()
 wall.add(
     Wall(
         color=colors.get_wall(),
-        screen=screen.get_rect()
+        screen=screen.get_rect(),
+        enemy_reference=enemy
     )
 )
-
-
 # ENEMY ###############################
-enemy = pygame.sprite.Group()
 
 
 def spawn_enemy() -> None:
@@ -50,13 +50,11 @@ def spawn_enemy() -> None:
             health=10,
             color=colors.get_enemy(),
             lefty=random.randint(0, 1),
-            screen=screen.get_rect()
+            screen=screen.get_rect(),
+            ammo_reference=ammo
         )
     )
-
-
 # AMMO ###############################
-ammo = pygame.sprite.Group()
 
 
 def spawn_ammo() -> None:
@@ -64,7 +62,8 @@ def spawn_ammo() -> None:
         Ammo(
             colors.get_ammo(),
             screen.get_rect(),
-            wall.sprite.rect,
+            # send rect if wall sprite exist or none
+            wall.sprite.rect if wall.sprite != None else None,
             random.randint(1, 10),  # seconds
         )
     )
@@ -75,17 +74,18 @@ for x in range(random.randint(5, 10)):
     spawn_ammo()
 
 # PLAYER ###############################
-player = pygame.sprite.GroupSingle()
 player.add(
     Player(
         color=colors.get_player(),
-        screen=screen.get_rect()
+        screen=screen.get_rect(),
+        ammo_reference=ammo,
+        enemy_reference=enemy
     )
 )
 
 # Timers ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
-ammo_timer = pygame.time.set_timer(event_ammo_spawn, 5000)
+ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
 
 event_enemy_spawn = pygame.USEREVENT + 2
 enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
@@ -123,15 +123,18 @@ while True:
             spawn_enemy()
 
     screen.fill((colors.get_ground()))
+
+    wall.update()
     wall.draw(screen)
+
+    enemy.update(delta)
     enemy.draw(screen)
-    enemy.update(delta, wall.sprite.rect)
 
-    ammo.draw(screen)
     ammo.update(delta)
+    ammo.draw(screen)
 
-    player.draw(screen)
     player.update(delta)
+    player.draw(screen)
 
     pygame.display.update()
     clock.tick(60)  # FPS limited
