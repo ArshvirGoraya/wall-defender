@@ -69,6 +69,7 @@ class ColorScheme:
 
     # RGB randomization
     def randomize(self) -> None:
+        # rgb = (randint(0, 255), randint(0, 255), randint(0, 255))
         self.current_scheme = {
             self.GROUND: (randint(0, 255), randint(0, 255), randint(0, 255)),
             self.AMMO: (randint(0, 255), randint(0, 255), randint(0, 255)),

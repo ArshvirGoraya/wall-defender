@@ -26,22 +26,35 @@ colors = ColorScheme(ColorScheme.S_DARK)
 
 
 # WALL ###############################
+WALL_POSITION = pygame.Vector2(screen_w/2, 0)
+
 wall = pygame.sprite.GroupSingle()
 wall.add(
     Wall(
         width=100,
         height=screen_h,
         color=colors.get_wall(),
-        x=screen_w/2,   # top right
-        y=0             # top right
+        x=WALL_POSITION.x,   # top right
+        y=WALL_POSITION.y    # top right
     )
 )
 # ENEMY ###############################
 enemy = pygame.sprite.Group()
 enemy.add(
     Enemy(
+        speed=300,
+        health=10,
         color=colors.get_enemy(),
         lefty=False,
+        screen=screen.get_rect()
+    )
+)
+enemy.add(
+    Enemy(
+        speed=300,
+        health=10,
+        color=colors.get_enemy(),
+        lefty=True,
         screen=screen.get_rect()
     )
 )
@@ -70,7 +83,7 @@ while True:
     screen.fill((colors.get_ground()))
     wall.draw(screen)
     enemy.draw(screen)
-    enemy.update(delta=delta)
+    enemy.update(delta, wall.sprite.rect)
 
     pygame.display.update()
     # clock.tick(240)  # FPS limited

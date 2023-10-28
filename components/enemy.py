@@ -3,27 +3,15 @@ from random import randint
 
 
 class Enemy(pygame.sprite.Sprite):
-    speed = 50
-
-    health: float = 10
-    lefty: bool = True  # If false, will move right.
-
     WIDTH = 50
     HEIGHT = 50
 
-    # Bounding box:
-    right_limit = 0
-    left_limit = 0
-    top_limit = 0
-    bottom_limit = 0
-
-    def __init__(self, color, lefty, screen) -> None:
+    def __init__(self, speed, health, color, lefty, screen) -> None:
         super().__init__()  # Get inherited attributes and functions.
 
         # Defining bounding box to screen.
         self.top_limit = screen.top
         self.left_limit = screen.left
-
         self.bottom_limit = screen.bottom - self.HEIGHT
         self.right_limit = screen.right - self.WIDTH
 
@@ -31,9 +19,11 @@ class Enemy(pygame.sprite.Sprite):
         self.color = color
         self.image = pygame.Surface((self.WIDTH, self.HEIGHT))
         self.image.fill((color))
-        self.lefty = lefty
+        self.image.blit
 
         # Assign position: x and y
+        self.lefty = lefty  # True = move left. False = move right.
+
         y = randint(self.top_limit, self.bottom_limit)
         if lefty:  # If lefty, will spawn left and move right.
             x = self.left_limit
@@ -44,15 +34,27 @@ class Enemy(pygame.sprite.Sprite):
         self.x_pos = x  # Required to avoid integer truncating for self.rect.x
         self.y_pos = y
 
-    def update(self, delta: float) -> None:
-        self.destroy_check()
+        self.speed = speed
+        self.health = health
+
+    def update(self, delta, wall_rect) -> None:
+        self.destroy_check(wall_rect)
         self.move(delta)
 
-    def destroy_check(self) -> None:
+    def destroy_check(self, wall_rect) -> None:
         if self.health <= 0:
             self.kill()
 
+        # Destroy if collided with wall.
+        if self.lefty:
+            if self.x_pos+self.WIDTH >= wall_rect.left:
+                self.kill()
+        else:
+            if self.x_pos <= wall_rect.right:
+                self.kill()
+
     # Movement (frame-rate independent)
+
     def move(self, delta: float) -> None:
         if self.lefty:
             self.x_pos += self.speed * delta
