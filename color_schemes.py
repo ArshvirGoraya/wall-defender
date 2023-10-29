@@ -19,8 +19,32 @@ class ColorScheme:
     PLAYER: int = 2
     ENEMY: int = 3
     WALL: int = 4
+    #
+    BUTTON_BG: int = 5
+    BUTTON_BG_HOVER: int = 6
+    BUTTON_BG_PRESSED: int = 7
+    BUTTON_BG_DISABLED: int = 8
+    BUTTON_TEXT: int = 9
+    #
+    TEXT: int = 10
 
     # Enum: All Schemes. Probably can store colors more efficiently (i.e., not as strings).
+    S_DARK: dict = {
+        GROUND: "#2c3142",
+        AMMO: "#505567",
+        PLAYER: "#68718D",
+        ENEMY: "#DBCBD8",
+        WALL: "#212431",
+        ##
+        BUTTON_BG: "#545b72",
+        BUTTON_BG_HOVER: "#3E4251",
+        BUTTON_BG_PRESSED: "#353945",
+        BUTTON_BG_DISABLED: "#2c3142",
+        BUTTON_TEXT: "#F0E7D8",
+        ##
+        TEXT: "#F0E7D8"
+    }
+
     S_WATERMELLON: dict = {
         GROUND: "#A7E8BD",
         AMMO: "#FFD972",
@@ -35,13 +59,7 @@ class ColorScheme:
         ENEMY: "#DBCBD8",
         WALL: "#101935",
     }
-    S_DARK: dict = {
-        GROUND: "#2c3142",
-        AMMO: "#505567",
-        PLAYER: "#545b72",
-        ENEMY: "#DBCBD8",
-        WALL: "#393e51",
-    }
+
     # DEFINE MORE COLOR SCHEMES HERE: ########################################
 
     current_scheme: dict = S_WATERMELLON
@@ -67,7 +85,26 @@ class ColorScheme:
     def get_wall(self) -> str:
         return self.current_scheme[self.WALL]
 
+    def get_text(self) -> str:
+        return self.current_scheme[self.TEXT]
+
+    # Buttons
+    def get_button_text(self) -> str:
+        return self.current_scheme[self.BUTTON_TEXT]
+
+    def get_button_bg(self) -> str:
+        return self.current_scheme[self.BUTTON_BG]
+
+    def get_button_hover(self) -> str:
+        return self.current_scheme[self.BUTTON_BG_HOVER]
+
+    def get_button_pressed(self) -> str:
+        return self.current_scheme[self.BUTTON_BG_PRESSED]
+
+    def get_button_disabled(self) -> str:
+        return self.current_scheme[self.BUTTON_BG_DISABLED]
     # RGB randomization
+
     def randomize(self) -> None:
         # rgb = (randint(0, 255), randint(0, 255), randint(0, 255))
 

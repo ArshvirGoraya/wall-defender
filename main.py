@@ -2,10 +2,14 @@ import pygame
 import random
 # import array as arr  # Incase: don't want to use lists.
 import time
-
+#
 from color_schemes import ColorScheme
 from game_components import GameComponents
+#
 from button import Button
+from text import Text
+#
+
 
 pygame.init()
 
@@ -22,7 +26,7 @@ screen = pygame.display.set_mode((screen_w, screen_h), pygame.RESIZABLE)
 
 # Colors
 colors = ColorScheme(ColorScheme.S_DARK)
-colors.randomize()
+# colors.randomize()
 
 # Player, Ammo, Wall, Enemies, Bullets, etc.
 game_components = GameComponents(colors, screen)
@@ -36,25 +40,59 @@ ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
 enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
 
 # MENU STUFF ###############################
-font_size = 80
-font = pygame.font.Font('assets/monogram.ttf', int(font_size))
-title = font.render("WALL DEFENDER", True, colors.get_player())
-title_rect = title.get_rect(center=(screen_w/2, screen_h * 0.2))
 
-test_button = pygame.sprite.GroupSingle()
-test_button.add(
+
+start_menu = pygame.sprite.Group()
+TITLE_Y = screen_h * 0.2
+CONTROLS_Y = screen_h * 0.7
+start_menu.add(
+    Text(
+        colors.get_text(),
+        80,
+        "WALL DEFENDER",
+        pygame.Vector2(screen_w/2, TITLE_Y)
+    ),
+    Text(
+        colors.get_text(),
+        40,
+        "-=CONTROLS=-",
+        pygame.Vector2(screen_w/2, CONTROLS_Y)
+    ),
+    Text(
+        colors.get_text(),
+        40,
+        "Move: wasd",
+        pygame.Vector2(screen_w/2, CONTROLS_Y + (40 * 1))
+    ),
+    Text(
+        colors.get_text(),
+        40,
+        "Attack: arrows or ijkl",
+        pygame.Vector2(screen_w/2, CONTROLS_Y + (40 * 2))
+    ),
+    Text(
+        colors.get_text(),
+        40,
+        "Run: hold shift",
+        pygame.Vector2(screen_w/2, CONTROLS_Y + (40 * 3))
+    )
+)
+
+button_start_game = pygame.sprite.GroupSingle()
+button_start_game.add(
     Button(
-        "RED",
-        "CYAN",
-        "BLACK",
-        "WHITE",
-        "GREY",
+        colors.get_button_text(),
+        colors.get_button_bg(),
+        colors.get_button_hover(),
+        colors.get_button_pressed(),
+        colors.get_button_disabled(),
         False,
-        "Test Button",
+        "Start Game",
         40,
         pygame.Vector2(screen_w/2, screen_h/2)
     )
 )
+
 
 # Game States ###############################
 # Enum: Game States (don't want/need enum import)
@@ -62,9 +100,10 @@ GAME = 0
 START = 1
 PAUSE = 2
 FAIL = 3
-UPGRADE = 4
+WIN = 4
+UPGRADE = 5
 
-game_state = START
+game_state = WIN
 # game_state = GAME
 
 # Delta Time:
@@ -98,19 +137,20 @@ while True:
 
     if game_state == START:
         screen.fill((colors.get_ground()))
-        screen.blit(title, title_rect)
+        # screen.blit(title, title_rect)
 
-        test_button.update(screen)
-        test_button.draw(screen)
+        start_menu.draw(screen)
 
-        if test_button.sprite.detect_click():
+        button_start_game.update(screen)
+        button_start_game.draw(screen)
+
+        if button_start_game.sprite.detect_click():
             game_state = GAME
             game_start()
 
-        #
-        #
-        #
-        #
+    elif game_state == WIN:
+        screen.fill((colors.get_ground()))
+        start_menu.draw(screen)
 
     elif game_state == GAME:
         screen.fill((colors.get_ground()))
@@ -135,10 +175,11 @@ while True:
         # Spawn bullet if player has shot:
         # If player has ammo,
         # check if is shooting and get direction of shot.
-        if game_components.player.sprite.ammo_count:
-            bullet_direction = game_components.player.sprite.shooting()
-            if bullet_direction.length() != 0:
-                game_components.spawn_bullet(bullet_direction)
+        if game_components.player.sprite != None:  # Check if player is not dead.
+            if game_components.player.sprite.ammo_count:
+                bullet_direction = game_components.player.sprite.shooting()
+                if bullet_direction.length() != 0:
+                    game_components.spawn_bullet(bullet_direction)
 
     pygame.display.update()
     clock.tick(60)  # FPS limited
