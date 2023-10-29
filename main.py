@@ -1,6 +1,6 @@
 import pygame
 import random
-import array as arr  # Incase: don't want to use lists.
+# import array as arr  # Incase: don't want to use lists.
 import time
 
 from color_schemes import ColorScheme
@@ -9,6 +9,7 @@ from components.enemy import Enemy
 from components.ammo import Ammo
 from components.player import Player
 from components.bullet import Bullet
+from game_components import GameComponents
 
 pygame.init()
 
@@ -27,97 +28,30 @@ screen = pygame.display.set_mode((screen_w, screen_h), pygame.RESIZABLE)
 colors = ColorScheme(ColorScheme.S_DARK)
 colors.randomize()
 
-# Groups: ###############################
-wall = pygame.sprite.GroupSingle()
-enemy = pygame.sprite.Group()
-ammo = pygame.sprite.Group()
-player = pygame.sprite.GroupSingle()
-bullet = pygame.sprite.Group()
-
-
-# WALL ###############################
-wall.add(
-    Wall(
-        color=colors.get_wall(),
-        screen=screen.get_rect(),
-        enemy_reference=enemy
-    )
-)
-# ENEMY ###############################
-
-
-def spawn_enemy() -> None:
-    enemy.add(
-        Enemy(
-            speed=300,
-            health=10,
-            color=colors.get_enemy(),
-            lefty=random.randint(0, 1),
-            screen=screen.get_rect(),
-            ammo_reference=ammo
-        )
-    )
-# AMMO ###############################
-
-
-def spawn_ammo() -> None:
-    ammo.add(
-        Ammo(
-            colors.get_ammo(),
-            screen.get_rect(),
-            # send rect if wall sprite exist or none
-            wall.sprite.rect if wall.sprite != None else None,
-            random.randint(1, 10),  # seconds
-        )
-    )
+# Player, Ammo, Wall, Enemies, Bullets, etc.
+game_components = GameComponents(colors, screen)
 
 
 # Inital ammo
 for x in range(random.randint(5, 10)):
-    spawn_ammo()
+    game_components.spawn_ammo()
 
-# PLAYER ###############################
-player.add(
-    Player(
-        color=colors.get_player(),
-        screen=screen.get_rect(),
-        ammo_reference=ammo,
-        enemy_reference=enemy
-    )
-)
-
-# BULLET ###############################
-
-
-def spawn_bullet(bullet_direction: pygame.Vector2) -> None:
-    bullet.add(
-        Bullet(
-            speed=400,
-            color=colors.get_player(),
-            player_pos=pygame.Vector2(
-                player.sprite.x_pos, player.sprite.y_pos),
-            direction=bullet_direction,
-            enemy_reference=enemy,
-            screen=screen.get_rect()
-        )
-    )
-
-
-# Timers ###############################
+# CUSTOM EVENTS & TIMERS ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
-ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
-
 event_enemy_spawn = pygame.USEREVENT + 2
+
+ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
 enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
 
 
-# Enum: Game States
+# Enum: Game States (don't want/need enum import)
 GAME = 0
-PAUSE = 1
-FAIL = 2
-UPGRADE = 3
+START = 1
+PAUSE = 2
+FAIL = 3
+UPGRADE = 4
 
-game_state = GAME
+game_state = START
 
 clock = pygame.time.Clock()  # To limit frame rate.
 previous_time = time.time()  # For delta time (frame-rate independent).
@@ -127,44 +61,53 @@ while True:
     previous_time = time.time()
 
     for event in pygame.event.get():
-        # match event.type:
-        #     case pygame.QUIT:
-        #         pygame.quit()
-        #         quit()  # Exits while loop immediately.
-
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()  # Exits while loop immediately.
 
-        elif event.type == event_ammo_spawn:
-            spawn_ammo()
+        if game_state == GAME:
+            # Match case is kind of annoying in python: can't just match with event_ammo_spawn
+            if event.type == event_ammo_spawn:
+                game_components. spawn_ammo()
 
-        elif event.type == event_enemy_spawn:
-            spawn_enemy()
+            elif event.type == event_enemy_spawn:
+                game_components.spawn_enemy()
 
-    screen.fill((colors.get_ground()))
+    if game_state == START:
+        screen.fill("WHITE")
 
-    wall.update()
-    wall.draw(screen)
+        #
+        #
+        #
+        #
 
-    enemy.update(delta)
-    enemy.draw(screen)
+    elif game_state == GAME:
+        screen.fill((colors.get_ground()))
 
-    ammo.update(delta)
-    ammo.draw(screen)
+        game_components.wall.update()
+        game_components.wall.draw(screen)
 
-    player.update(delta)
-    player.draw(screen)
+        game_components.enemy.update(delta)
+        game_components.enemy.draw(screen)
 
-    bullet.update(delta)
-    bullet.draw(screen)
+        # Ammo resources on the ground.
+        game_components.ammo.update(delta)
+        game_components.ammo.draw(screen)
 
-    # If player has ammo,
-    # check if is shooting and get direction of shot.
-    if player.sprite.ammo_count:
-        bullet_direction = player.sprite.shooting()
-        if bullet_direction.length() != 0:
-            spawn_bullet(bullet_direction)
+        game_components.player.update(delta)
+        game_components.player.draw(screen)
+
+        # Update all spawned bullets:
+        game_components.bullet.update(delta)
+        game_components.bullet.draw(screen)
+
+        # Spawn bullet if player has shot:
+        # If player has ammo,
+        # check if is shooting and get direction of shot.
+        if game_components.player.sprite.ammo_count:
+            bullet_direction = game_components.player.sprite.shooting()
+            if bullet_direction.length() != 0:
+                game_components.spawn_bullet(bullet_direction)
 
     pygame.display.update()
     clock.tick(60)  # FPS limited
