@@ -78,15 +78,27 @@ ui_player_health = HealthBar(
     colors.get_text(),
     colors.get_player(),
     colors.get_enemy(),
+    "RED",
     pygame.Vector2(150, 26),  # size
     pygame.Vector2(20, 70),  # pos
     game_components.get_player().health,
     game_components.get_player().max_health
 )
+ui_wall_health = HealthBar(
+    colors.get_text(),
+    colors.get_player(),
+    colors.get_enemy(),
+    "RED",
+    pygame.Vector2(150, 26),  # size
+    pygame.Vector2(20, 70 + 30),  # pos
+    game_components.get_wall().health,
+    game_components.get_wall().max_health
+)
 
 ui.add(
     ui_ammo,
-    ui_player_health
+    ui_player_health,
+    ui_wall_health
 )
 
 
@@ -219,6 +231,10 @@ while True:
 
         ui_player_health.update(game_components.get_player(
         ).health, game_components.get_player().max_health)
+
+    if game_components.get_wall() != None:
+        ui_wall_health.update(game_components.get_wall(
+        ).health, game_components.get_wall().max_health)
 
     ui.draw(screen)
 

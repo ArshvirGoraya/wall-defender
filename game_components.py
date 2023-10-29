@@ -47,6 +47,9 @@ class GameComponents():
     def get_player(self) -> pygame.sprite.Sprite():
         return self.player.sprite
 
+    def get_wall(self) -> pygame.sprite.Sprite():
+        return self.wall.sprite
+
     # ENEMY ###############################
 
     def spawn_enemy(self) -> None:

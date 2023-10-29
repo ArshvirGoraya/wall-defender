@@ -4,7 +4,7 @@ import pygame
 class HealthBar(pygame.sprite.Sprite):
     PADDING = 10
 
-    def __init__(self, color, bg_color, danger_color, size, pos, maximum, val) -> None:
+    def __init__(self, color, bg_color, danger_color, extreme_danger_color, size, pos, maximum, val) -> None:
         super().__init__()
 
         self.size = size
@@ -30,15 +30,18 @@ class HealthBar(pygame.sprite.Sprite):
         self.color = color
         self.bg_color = bg_color
         self.danger_color = danger_color
+        self.extreme_danger_color = extreme_danger_color
 
     def update(self, health, health_max) -> None:
         inner_bar_width = self.get_bar_value(
             health, health_max, self.inner_width_max)
 
-        print(inner_bar_width, " / ", self.inner_width_max)
+        # print(inner_bar_width, " / ", self.inner_width_max)
 
         color = self.color
-        if health <= health_max * 0.5:
+        if health <= health_max * 0.2:
+            color = self.extreme_danger_color
+        elif health <= health_max * 0.5:
             color = self.danger_color
 
         self.draw_bar(color, self.bg_color, self.size, inner_bar_width)
