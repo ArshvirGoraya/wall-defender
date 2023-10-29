@@ -127,6 +127,7 @@ def draw_game(screen: pygame.surface.Surface) -> None:
     game_components.ammo.draw(screen)
     game_components.player.draw(screen)
     game_components.bullet.draw(screen)
+    draw_ui()
 
 
 def update_game(delta) -> None:
@@ -148,6 +149,32 @@ def update_game(delta) -> None:
             bullet_direction = game_components.player.sprite.shooting()
             if bullet_direction.length() != 0:
                 game_components.spawn_bullet(bullet_direction)
+
+    update_ui()
+
+
+def draw_ui():
+    ui.draw(screen)
+
+
+def update_ui():
+    global game_state
+    if game_components.get_player() != None:
+        ui_ammo.update_text(f'Ammo: {game_components.get_player().ammo_count} / {
+            game_components.get_player().max_ammo}')
+
+        ui_player_health.update(game_components.get_player(
+        ).health, game_components.get_player().max_health)
+    else:
+        # If player is dead: fail
+        game_state = FAIL
+
+    if game_components.get_wall() != None:
+        ui_wall_health.update(game_components.get_wall(
+        ).health, game_components.get_wall().max_health)
+    else:
+        # If wall is dead: fail
+        game_state = FAIL
 
 
 # Game States ###############################
@@ -214,9 +241,9 @@ while True:
                     game_state = PAUSE
 
             # TESTING:
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    game_state = FAIL
+            # elif event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE:
+            #         game_state = WIN
 
     if game_state == GAME:
         draw_game(screen)
@@ -273,25 +300,6 @@ while True:
         if button_start_game.sprite.detect_click():
             game_state = GAME
             game_start()
-
-    if game_components.get_player() != None:
-        ui_ammo.update_text(f'Ammo: {game_components.get_player().ammo_count} / {
-            game_components.get_player().max_ammo}')
-
-        ui_player_health.update(game_components.get_player(
-        ).health, game_components.get_player().max_health)
-    else:
-        # If player is dead: fail
-        game_state = FAIL
-
-    if game_components.get_wall() != None:
-        ui_wall_health.update(game_components.get_wall(
-        ).health, game_components.get_wall().max_health)
-    else:
-        # If wall is dead: fail
-        game_state = FAIL
-
-    ui.draw(screen)
 
     pygame.display.update()
     clock.tick(60)  # FPS limited
