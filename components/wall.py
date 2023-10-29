@@ -13,7 +13,7 @@ class Wall(pygame.sprite.Sprite):
         self.height = screen.height
 
         self.image = pygame.Surface((self.width, self.height))
-        self.image.fill((color))
+        self.image.fill((self.color))
 
         # Position = middle of screen (horizontal).
         self.rect = self.image.get_rect(topright=(screen.width / 2, 0))

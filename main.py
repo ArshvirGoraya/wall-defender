@@ -4,12 +4,8 @@ import random
 import time
 
 from color_schemes import ColorScheme
-from components.wall import Wall
-from components.enemy import Enemy
-from components.ammo import Ammo
-from components.player import Player
-from components.bullet import Bullet
 from game_components import GameComponents
+from button import Button
 
 pygame.init()
 
@@ -32,10 +28,6 @@ colors.randomize()
 game_components = GameComponents(colors, screen)
 
 
-# Inital ammo
-for x in range(random.randint(5, 10)):
-    game_components.spawn_ammo()
-
 # CUSTOM EVENTS & TIMERS ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
 event_enemy_spawn = pygame.USEREVENT + 2
@@ -43,7 +35,28 @@ event_enemy_spawn = pygame.USEREVENT + 2
 ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
 enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
 
+# MENU STUFF ###############################
+font_size = 80
+font = pygame.font.Font('assets/monogram.ttf', int(font_size))
+title = font.render("WALL DEFENDER", True, colors.get_player())
+title_rect = title.get_rect(center=(screen_w/2, screen_h * 0.2))
 
+test_button = pygame.sprite.GroupSingle()
+test_button.add(
+    Button(
+        "RED",
+        "CYAN",
+        "BLACK",
+        "WHITE",
+        "GREY",
+        False,
+        "Test Button",
+        40,
+        pygame.Vector2(screen_w/2, screen_h/2)
+    )
+)
+
+# Game States ###############################
 # Enum: Game States (don't want/need enum import)
 GAME = 0
 START = 1
@@ -52,9 +65,19 @@ FAIL = 3
 UPGRADE = 4
 
 game_state = START
+# game_state = GAME
 
+# Delta Time:
 clock = pygame.time.Clock()  # To limit frame rate.
 previous_time = time.time()  # For delta time (frame-rate independent).
+
+# Inital ammo
+
+
+def game_start():
+    for x in range(random.randint(5, 10)):
+        game_components.spawn_ammo()
+
 
 while True:
     delta = time.time() - previous_time
@@ -74,7 +97,15 @@ while True:
                 game_components.spawn_enemy()
 
     if game_state == START:
-        screen.fill("WHITE")
+        screen.fill((colors.get_ground()))
+        screen.blit(title, title_rect)
+
+        test_button.update(screen)
+        test_button.draw(screen)
+
+        if test_button.sprite.detect_click():
+            game_state = GAME
+            game_start()
 
         #
         #

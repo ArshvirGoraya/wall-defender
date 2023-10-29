@@ -5,11 +5,13 @@ class Player(pygame.sprite.Sprite):
     health: float = 10
     speed = 250
     running = False
-    ammo_count: int = 10
+    ammo_count: int = 100000
 
     # Shoot wait time:
     shoot_wait_millis = 0.5
     shoot_wait_current = 0
+
+    velocity = pygame.Vector2(0, 0)
 
     def __init__(self, color, screen, ammo_reference, enemy_reference) -> None:
         super().__init__()
@@ -106,9 +108,9 @@ class Player(pygame.sprite.Sprite):
             if self.running:
                 speed *= 2
 
-            velocity = direction.normalize() * (speed * delta)
-            self.x_pos += velocity.x
-            self.y_pos += velocity.y
+            self.velocity = direction.normalize() * (speed * delta)
+            self.x_pos += self.velocity.x
+            self.y_pos += self.velocity.y
 
         # Set new position:
         self.rect = self.image.get_rect(

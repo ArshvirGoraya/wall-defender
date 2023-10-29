@@ -70,10 +70,52 @@ class ColorScheme:
     # RGB randomization
     def randomize(self) -> None:
         # rgb = (randint(0, 255), randint(0, 255), randint(0, 255))
-        self.current_scheme = {
-            self.GROUND: (randint(0, 255), randint(0, 255), randint(0, 255)),
-            self.AMMO: (randint(0, 255), randint(0, 255), randint(0, 255)),
-            self.PLAYER: (randint(0, 255), randint(0, 255), randint(0, 255)),
-            self.ENEMY: (randint(0, 255), randint(0, 255), randint(0, 255)),
-            self.WALL: (randint(0, 255), randint(0, 255), randint(0, 255)),
-        }
+
+        for color in self.current_scheme:
+            self.current_scheme[color] = (randint(
+                0, 255),
+                randint(0, 255),
+                randint(0, 255))
+
+    # def mono_randomize(self) -> None:
+    #     # note: this function does not work as intended often, but can produce good outcomes sometimes.
+    #     # Should rewrite later to generate better color schemes.
+    #     #
+    #     # Randomly assign RGB colors to create monochromatic color scheme.
+    #     # 1 of them will increment by a constant amount for each color.
+    #     # Must increment from low enough to not go over 255.
+    #     # Increments: constant_increment * color_count (i.e., self.current_scheme.__len__())
+    #     # So the one that is changed will be set low enough to not go over that amount.
+
+    #     INCREMENT = 50
+
+    #     rand_rgb = randint(1, 3)
+
+    #     rand_color_1 = randint(0, 255)
+    #     rand_color_2 = randint(0, 255)
+    #     rand_color_3 = randint(0, 255)
+
+    #     required_space = 255 - (INCREMENT * self.current_scheme.__len__())
+
+    #     # Required space must not be larger than 255!
+    #     assert (required_space > 0, "Decrease INCREMENT in colors.mono_ranodom()!")
+
+    #     if rand_rgb == 1:
+    #         if rand_color_1 > required_space:
+    #             rand_color_1 = randint(0, 255 - required_space)
+    #     elif rand_rgb == 2:
+    #         if rand_color_2 > required_space:
+    #             rand_color_2 = randint(0, 255 - required_space)
+    #     else:
+    #         if rand_color_3 > required_space:
+    #             rand_color_3 = randint(0, 255 - required_space)
+
+    #     for color in self.current_scheme:
+    #         if rand_rgb == 1:
+    #             rand_color_1 = rand_color_1 + 25
+    #         elif rand_rgb == 2:
+    #             rand_color_2 = rand_color_2 + 25
+    #         else:
+    #             rand_color_3 = rand_color_3 + 25
+
+    #         self.current_scheme[color] = rand_color_1, rand_color_2, rand_color_3
