@@ -5,7 +5,11 @@ class Player(pygame.sprite.Sprite):
     health: float = 10
     speed = 250
     running = False
-    ammo_count: int = 0
+    ammo_count: int = 10
+
+    # Shoot wait time:
+    shoot_wait_millis = 0.5
+    shoot_wait_current = 0
 
     def __init__(self, color, screen, ammo_reference, enemy_reference) -> None:
         super().__init__()
@@ -31,10 +35,43 @@ class Player(pygame.sprite.Sprite):
         self.collision_check()
         self.movement(delta)
 
+        if self.shoot_wait_current > 0:
+            self.shoot_wait_current -= delta
+
+    def can_shoot(self) -> bool:
+        return self.shoot_wait_current <= 0
+
+    # Called from event loop directly.
+    def shooting(self) -> pygame.Vector2:
+        direction = pygame.Vector2(0, 0)
+        if not self.can_shoot():
+            return direction
+
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_i] or keys[pygame.K_UP]:
+            direction.y += -1
+        if keys[pygame.K_k] or keys[pygame.K_DOWN]:
+            direction.y += 1
+        if keys[pygame.K_l] or keys[pygame.K_RIGHT]:
+            direction.x += 1
+        if keys[pygame.K_j] or keys[pygame.K_LEFT]:
+            direction.x += -1
+
+        if direction.length() != 0:
+            self.triggered_shot()
+
+        # MAY NEED TO BE A COPY (does refernce die when this object does?)
+        return direction
+
+    def triggered_shot(self) -> None:
+        self.ammo_count -= 1
+        self.shoot_wait_current = self.shoot_wait_millis
+
     def collision_check(self) -> None:
-        for ammo in pygame.sprite.spritecollide(self, self.ammo_ref, True):
-            self.ammo_count += 1
-            # print(self.ammo_count)
+        # Increase ammo by the amount we collided with.
+        self.ammo_count += pygame.sprite.spritecollide(
+            self, self.ammo_ref, True).__len__()
 
         for enemy in pygame.sprite.spritecollide(self, self.enemy_ref, True):
             self.health -= enemy.get_damage()

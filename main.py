@@ -8,6 +8,7 @@ from components.wall import Wall
 from components.enemy import Enemy
 from components.ammo import Ammo
 from components.player import Player
+from components.bullet import Bullet
 
 pygame.init()
 
@@ -31,6 +32,8 @@ wall = pygame.sprite.GroupSingle()
 enemy = pygame.sprite.Group()
 ammo = pygame.sprite.Group()
 player = pygame.sprite.GroupSingle()
+bullet = pygame.sprite.Group()
+
 
 # WALL ###############################
 wall.add(
@@ -82,6 +85,23 @@ player.add(
         enemy_reference=enemy
     )
 )
+
+# BULLET ###############################
+
+
+def spawn_bullet(bullet_direction: pygame.Vector2) -> None:
+    bullet.add(
+        Bullet(
+            speed=400,
+            color=colors.get_player(),
+            player_pos=pygame.Vector2(
+                player.sprite.x_pos, player.sprite.y_pos),
+            direction=bullet_direction,
+            enemy_reference=enemy,
+            screen=screen.get_rect()
+        )
+    )
+
 
 # Timers ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
@@ -135,6 +155,16 @@ while True:
 
     player.update(delta)
     player.draw(screen)
+
+    bullet.update(delta)
+    bullet.draw(screen)
+
+    # If player has ammo,
+    # check if is shooting and get direction of shot.
+    if player.sprite.ammo_count:
+        bullet_direction = player.sprite.shooting()
+        if bullet_direction.length() != 0:
+            spawn_bullet(bullet_direction)
 
     pygame.display.update()
     clock.tick(60)  # FPS limited
