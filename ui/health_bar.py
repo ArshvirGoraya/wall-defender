@@ -71,7 +71,7 @@ class HealthBar(pygame.sprite.Sprite):
         # Draw inner bar:
 
         self.bar_inner = pygame.surface.Surface(
-            (inner_bar_width, size.y - self.PADDING))
+            (max(0, inner_bar_width), size.y - self.PADDING))
         self.bar_inner.fill(color)
 
         self.bar.blit(self.bar_inner, self.bar_inner.get_rect(

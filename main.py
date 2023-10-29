@@ -15,7 +15,8 @@ from menus.pause_menu import PauseMenu
 from menus.fail_menu import FailMenu
 #
 from ui.health_bar import HealthBar
-
+#
+from wave_emitter import WaveEmitter
 
 pygame.init()
 
@@ -36,14 +37,6 @@ colors = ColorScheme(ColorScheme.S_DARK)
 
 # Player, Ammo, Wall, Enemies, Bullets, etc.
 game_components = GameComponents(colors, screen)
-
-
-# CUSTOM EVENTS & TIMERS ###############################
-event_ammo_spawn = pygame.USEREVENT + 1
-event_enemy_spawn = pygame.USEREVENT + 2
-
-ammo_timer = pygame.time.set_timer(event_ammo_spawn, 1000)
-enemy_timer = pygame.time.set_timer(event_enemy_spawn, 1000)
 
 # MENU STUFF ###############################
 start_menu = StartMenu(screen, colors)
@@ -177,17 +170,7 @@ def update_ui():
         game_state = FAIL
 
 
-# Game States ###############################
-# Enum: Game States (don't want/need enum import)
-GAME = 0
-START = 1
-PAUSE = 2
-FAIL = 3
-WIN = 4
-UPGRADE = 5
-
-game_state = START
-
+# Restart ###############################
 
 def restart_game(previous_wave=False):
     # Reset player position to initial.
@@ -211,6 +194,26 @@ def restart_game(previous_wave=False):
         game_components.ammo.empty()
 
 
+# CUSTOM EVENTS ###############################
+event_ammo_spawn = pygame.USEREVENT + 1
+# event_enemy_spawn = pygame.USEREVENT + 2
+pygame.time.set_timer(event_ammo_spawn, 1000)  # Emit event on timer.
+# pygame.time.set_timer(event_enemy_spawn, 1000)  # Emit event on timer.
+
+wave_emitter = WaveEmitter()
+
+# Game States ###############################
+# Enum: Game States (don't want/need enum import)
+GAME = 0
+START = 1
+PAUSE = 2
+FAIL = 3
+WIN = 4
+UPGRADE = 5
+
+game_state = START
+
+
 unpause_game_state = game_state
 while True:
     delta = time.time() - previous_time
@@ -225,10 +228,10 @@ while True:
         if game_state == GAME:
             # Match case is kind of annoying in python: can't just match with event_ammo_spawn
             if event.type == event_ammo_spawn:
-                game_components. spawn_ammo()
+                game_components.spawn_ammo()
 
-            elif event.type == event_enemy_spawn:
-                game_components.spawn_enemy()
+            # elif event.type == event_enemy_spawn:
+            #     game_components.spawn_enemy()
 
         # When not in start menu (escape menu access)
         if game_state != START:
@@ -248,8 +251,9 @@ while True:
     if game_state == GAME:
         draw_game(screen)
         update_game(delta)
+        wave_emitter.update_timer(delta, game_components)  # Spawns waves.
 
-    elif game_start == UPGRADE:
+    elif game_state == UPGRADE:
         pass
 
     elif game_state == PAUSE:
