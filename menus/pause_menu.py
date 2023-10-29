@@ -4,7 +4,7 @@ from .button import Button
 # from color_schemes import ColorScheme
 
 
-class StartMenu():
+class PauseMenu():
     screen_h: float
     screen_w: float
     # colors: ColorScheme
@@ -12,7 +12,7 @@ class StartMenu():
     CONTROLS_Y = 0
 
     menu = pygame.sprite.Group()
-    button_start_game: pygame.sprite.GroupSingle()
+    button: pygame.sprite.GroupSingle()
 
     def __init__(self, screen, colors):
         self.screen_h = screen.get_rect().height
@@ -26,7 +26,7 @@ class StartMenu():
             Text(
                 colors.get_text(),
                 80,
-                "WALL DEFENDER",
+                "PAUSED",
                 pygame.Vector2(self.screen_w/2, self.TITLE_Y)
             ),
             Text(
@@ -61,8 +61,8 @@ class StartMenu():
             ),
         )
 
-        self.button_start_game = pygame.sprite.GroupSingle()
-        self.button_start_game.add(
+        self.button = pygame.sprite.GroupSingle()
+        self.button.add(
             Button(
                 colors.get_button_text(),
                 colors.get_button_bg(),
@@ -70,7 +70,7 @@ class StartMenu():
                 colors.get_button_pressed(),
                 colors.get_button_disabled(),
                 False,
-                "Start Game",
+                "Resume",
                 40,
                 pygame.Vector2(self.screen_w/2, self.screen_h/2)
             )

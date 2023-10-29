@@ -3,9 +3,12 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
     health: float = 10
+    max_health: float = 10
+
     speed = 250
     running = False
     ammo_count: int = 100000
+    max_ammo: int = 100001
 
     # Shoot wait time:
     shoot_wait_millis = 0.5
