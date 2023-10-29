@@ -27,14 +27,11 @@ class GameComponents():
         self.bullet = pygame.sprite.Group()
 
         # WALL ###############################
-        self.wall.add(
-            Wall(
-                color=self.colors.get_wall(),
-                screen=self.screen.get_rect(),
-                enemy_reference=self.enemy
-            )
-        )
+        self.create_wall()
         # PLAYER ###############################
+        self.create_player()
+
+    def create_player(self):
         self.player.add(
             Player(
                 color=self.colors.get_player(),
@@ -46,6 +43,15 @@ class GameComponents():
 
     def get_player(self) -> pygame.sprite.Sprite():
         return self.player.sprite
+
+    def create_wall(self):
+        self.wall.add(
+            Wall(
+                color=self.colors.get_wall(),
+                screen=self.screen.get_rect(),
+                enemy_reference=self.enemy
+            )
+        )
 
     def get_wall(self) -> pygame.sprite.Sprite():
         return self.wall.sprite

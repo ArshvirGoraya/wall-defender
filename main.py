@@ -12,6 +12,7 @@ from menus.text import Text
 from menus.start_menu import StartMenu
 from menus.win_menu import WinMenu
 from menus.pause_menu import PauseMenu
+from menus.fail_menu import FailMenu
 #
 from ui.health_bar import HealthBar
 
@@ -56,6 +57,11 @@ button_endless = win_menu.button
 pause_menu = PauseMenu(screen, colors)
 pause_menu_text = pause_menu.menu
 button_resume = pause_menu.button
+
+fail_menu = FailMenu(screen, colors)
+fail_menu_text = fail_menu.menu
+button_restart_0 = fail_menu.button
+button_restart_last = fail_menu.button_last
 
 # Background fill with opacity. Can be used in many places.
 bg = pygame.surface.Surface(screen.get_size())
@@ -154,6 +160,30 @@ WIN = 4
 UPGRADE = 5
 
 game_state = START
+
+
+def restart_game(previous_wave=False):
+    # Reset player position to initial.
+    # Reset player health to initial.
+    # Reset ammo to initial.
+    # Despawn all enemies.
+    # Despawn all ammo.
+
+    if not previous_wave:
+        # Re-create player/wall (if needed) and assign initial health.
+        if not game_components.get_player():
+            game_components.create_player()
+        game_components.get_player().health = 10
+
+        if not game_components.get_wall():
+            game_components.create_wall()
+        game_components.get_wall().health = 10
+
+        # Despawn enemies and ammo:
+        game_components.enemy.empty()
+        game_components.ammo.empty()
+
+
 unpause_game_state = game_state
 while True:
     delta = time.time() - previous_time
@@ -201,6 +231,7 @@ while True:
         pause_menu_text.draw(screen)
         button_resume.update(screen)
         button_resume.draw(screen)
+
         if button_resume.sprite.detect_click():
             game_state = unpause_game_state
 
@@ -210,17 +241,35 @@ while True:
         win_menu_text.draw(screen)
         button_endless.update(screen)
         button_endless.draw(screen)
+
         if button_endless.sprite.detect_click():
             game_state = GAME
 
     elif game_state == FAIL:
-        pass
+        draw_game(screen)
+        screen.blit(bg, bg.get_rect())
+
+        fail_menu_text.draw(screen)
+
+        button_restart_0.update(screen)
+        button_restart_0.draw(screen)
+
+        button_restart_last.update(screen)
+        button_restart_last.draw(screen)
+
+        if button_restart_0.sprite.detect_click():
+            restart_game()
+            game_state = GAME
+        elif button_restart_last.sprite.detect_click():
+            restart_game()
+            game_state = GAME
 
     elif game_state == START:
         screen.fill((colors.get_ground()))
         start_menu_text.draw(screen)
         button_start_game.update(screen)
         button_start_game.draw(screen)
+
         if button_start_game.sprite.detect_click():
             game_state = GAME
             game_start()
@@ -231,10 +280,16 @@ while True:
 
         ui_player_health.update(game_components.get_player(
         ).health, game_components.get_player().max_health)
+    else:
+        # If player is dead: fail
+        game_state = FAIL
 
     if game_components.get_wall() != None:
         ui_wall_health.update(game_components.get_wall(
         ).health, game_components.get_wall().max_health)
+    else:
+        # If wall is dead: fail
+        game_state = FAIL
 
     ui.draw(screen)
 

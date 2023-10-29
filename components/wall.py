@@ -2,7 +2,7 @@ import pygame
 
 
 class Wall(pygame.sprite.Sprite):
-    health: float = 10
+    health: float = 1
     max_health: float = 10
 
     def __init__(self, color, screen, enemy_reference) -> None:
