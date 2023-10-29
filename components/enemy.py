@@ -27,9 +27,9 @@ class Enemy(pygame.sprite.Sprite):
 
         y = randint(self.top_limit, self.bottom_limit)
         if lefty:  # If lefty, will spawn left and move right.
-            x = self.left_limit  # - randint(0, 25)
+            x = self.left_limit - randint(0, 125)
         else:
-            x = self.right_limit  # + randint(0, 25)
+            x = self.right_limit + randint(0, 125)
         self.rect = self.image.get_rect(topleft=(x, y))
 
         self.x_pos = x  # Required to avoid integer truncating for self.rect.x

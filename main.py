@@ -251,7 +251,13 @@ while True:
     if game_state == GAME:
         draw_game(screen)
         update_game(delta)
-        wave_emitter.update_timer(delta, game_components)  # Spawns waves.
+
+        if wave_emitter.is_in_wave():
+            # Check if wave has ended.
+            if not game_components.enemy.__len__():
+                wave_emitter.start_count_to_next_wave()
+        else:
+            wave_emitter.update_timer(delta, game_components)  # Spawns waves.
 
     elif game_state == UPGRADE:
         pass

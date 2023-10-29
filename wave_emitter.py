@@ -15,6 +15,9 @@ class WaveEmitter():
 
     enemy_increment = 10
 
+    def is_in_wave(self) -> bool:
+        return self.state == self.IN_WAVE
+
     def start_wave(self, game_components: GameComponents):
         print("STARTING WAVE!")
         for x in range(1, self.get_incoming_enemies()):
@@ -35,3 +38,7 @@ class WaveEmitter():
             self.start_wave(game_components)
 
             self.current_time = 0
+
+    def start_count_to_next_wave(self):
+        print("counting to next wave!")
+        self.state = self.WAIT_WAVE
