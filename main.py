@@ -301,12 +301,6 @@ while True:
                 if event.key == pygame.K_SPACE:
                     game_state = WIN
 
-    if game_state == GAME and not in_endless_mode:
-        # Check if won game:
-        if wave_emitter.current_wave == wave_emitter.final_wave:
-            game_state = WIN
-        # Don't want the rest of == GAME condition to run from this!
-
     if game_state == GAME:
         draw_game(screen)
         update_game(delta)
@@ -314,6 +308,11 @@ while True:
         if wave_emitter.is_in_wave():
             # Check if wave has ended.
             if not game_components.enemy.__len__():
+                # Check if won game:
+                if not in_endless_mode:
+                    if wave_emitter.current_wave == wave_emitter.final_wave:
+                        game_state = WIN
+
                 wave_emitter.start_count_to_next_wave()
                 spawn_ammo(random.randint(
                     int(wave_emitter.get_incoming_enemies() / 2),
