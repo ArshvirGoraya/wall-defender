@@ -23,7 +23,7 @@ from wave_emitter import WaveEmitter
 pygame.init()
 
 # Window Info ###############################
-pygame.display.set_caption("Resource Defender")
+pygame.display.set_caption("Wall Defender")
 pygame.display.set_icon(pygame.image.load("assets/icon.png"))
 
 # Screen Display ###########################
@@ -41,7 +41,7 @@ colors = ColorScheme(ColorScheme.S_DARK)
 game_components = GameComponents(colors, screen)
 wave_emitter = WaveEmitter(game_components)
 
-# MENU STUFF ###############################
+# MENU STUFF ###############################s
 start_menu = StartMenu(screen, colors)
 start_menu_text = start_menu.menu
 button_start_game = start_menu.button_start_game
@@ -228,9 +228,8 @@ def update_ui():
         ui_timer.update_text(f'00:%02d' % (ceil(wave_emitter.current_time)))
         # autopep8: on
 
-    if game_components.get_player().is_near_wall():
-        if ui_wall_enter.text != "enter":
-            ui_wall_enter.update_text("enter")
+    if game_components.get_player() != None and game_components.get_player().is_near_wall():
+        ui_wall_enter.update_text("enter")
 
         ui_wall_enter.update_pos(pygame.Vector2(game_components.get_player().rect.x - 2,
                                                 game_components.get_player().rect.y - 20))

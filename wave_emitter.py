@@ -73,6 +73,9 @@ class WaveEmitter():
             "max_ammo": self.game_components.get_player().max_ammo,
             "speed": self.game_components.get_player().speed,
             "shoot_wait_millis": self.game_components.get_player().shoot_wait_millis,
+
+            "move_state": self.game_components.get_player().move_state,
+            "rect": self.game_components.get_player().rect,
         }
 
     def get_wave_start_player_vars(self) -> dict:

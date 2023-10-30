@@ -170,6 +170,13 @@ class Player(pygame.sprite.Sprite):
         self.speed = self.INITIAL_SPEED
         self.shoot_wait_millis = self.INITIAL_SHOOT_WAIT_TIME
 
+        self.move_state = self.OUT_WALL
+
+        self.x_pos = self.screen.width/4
+        self.y_pos = self.screen.height/2
+        self.rect = self.image.get_rect(
+            center=(self.x_pos, self.y_pos))
+
     def set_variables(self, variables: dict):
         self.health = variables["health"]
         self.max_health = variables["max_health"]
@@ -177,6 +184,11 @@ class Player(pygame.sprite.Sprite):
         self.max_ammo = variables["max_ammo"]
         self.speed = variables["speed"]
         self.shoot_wait_millis = variables["shoot_wait_millis"]
+
+        self.move_state = variables["move_state"]
+        self.rect = variables["rect"]
+        self.x_pos = self.rect.x
+        self.y_pos = self.rect.y
 
     def is_near_wall(self) -> bool:
         return self.move_state == self.NEAR_WALL
