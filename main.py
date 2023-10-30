@@ -399,6 +399,9 @@ def upgrade(button):
 
         # case upgrade_menu.turret:
         #     pass
+# TURRETS ###############################
+
+
 # CUSTOM EVENTS ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
 # event_enemy_spawn = pygame.USEREVENT + 2
@@ -413,7 +416,7 @@ event_start_waves = pygame.USEREVENT + 2
 # For testing:
 
 TEST_WAVE: bool = False
-SKIP_OPENING: bool = True
+SKIP_OPENING: bool = False
 
 if TEST_WAVE:
     if not SKIP_OPENING:

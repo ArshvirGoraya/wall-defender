@@ -7,6 +7,7 @@ from components.enemy import Enemy
 from components.ammo import Ammo
 from components.player import Player
 from components.bullet import Bullet
+from components.turret import Turret
 
 from color_schemes import ColorScheme
 
@@ -36,6 +37,7 @@ class GameComponents():
         self.ammo = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.bullet = pygame.sprite.Group()
+        self.turret = pygame.sprite.Group()
 
         # WALL ###############################
         self.create_wall()
@@ -105,6 +107,14 @@ class GameComponents():
                 direction=bullet_direction,
                 enemy_reference=self.enemy,
                 screen=self.screen.get_rect()
+            )
+        )
+
+    def spawn_turret(self, screen):
+        self.turret.add(
+            Turret(
+                screen,
+                5,
             )
         )
 
