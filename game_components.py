@@ -112,7 +112,7 @@ class GameComponents():
     def spawn_turret(self, screen_width, screen_height):
         self.turret.add(
             Turret(
-                5,  # wait time
+                15,  # wait time
                 screen_width,
                 screen_height,
                 self,

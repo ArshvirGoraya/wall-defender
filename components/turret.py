@@ -13,7 +13,7 @@ class Turret(pygame.sprite.Sprite):
         self.image.fill(("WHITE"))
         # self.image.set_alpha(0)
 
-        print("screen height: ", int(screen_height))
+        # print("screen height: ", int(screen_height))
 
         self.y_pos = randint(5, int(screen_height))
         self.x_pos = screen_width / 2
