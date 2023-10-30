@@ -362,27 +362,28 @@ def print_stats():
     #       game_components.get_player().speed)
     # print(wave_emitter.current_wave, ": shoot speed = ",
     #       game_components.get_player().shoot_wait_millis)
-    print(wave_emitter.current_wave, ": ammo spawn rate = ", ammo_spawn_rate)
+    # print(wave_emitter.current_wave, ": ammo spawn rate = ", ammo_spawn_rate)
     # print(wave_emitter.current_wave, ": bullet speed = ",
     #       game_components.bullet_speed)
+    pass
 
 
 def upgrade(button):
     global ammo_spawn_rate
     match button:
         case upgrade_menu.ammo_cap:
-            game_components.get_player().max_ammo += 100
+            game_components.get_player().max_ammo += 10
         ##
         case upgrade_menu.health_player:
             game_components.get_player().max_health += 10
             game_components.get_player().health = game_components.get_player().max_health
 
         case upgrade_menu.health_wall:
-            game_components.get_wall().max_health += 10
+            game_components.get_wall().max_health += 3
             game_components.get_wall().health = game_components.get_wall().max_health
         ##
         case upgrade_menu.speed_up:
-            game_components.get_player().speed += 20
+            game_components.get_player().speed += 10
 
         case upgrade_menu.speed_shoot:
             game_components.get_player().shoot_wait_millis -= 0.05
@@ -394,8 +395,7 @@ def upgrade(button):
 
         ##
         case upgrade_menu.speed_bullet:
-            game_components.bullet_speed += 10
-
+            game_components.bullet_speed += 50
 
         # case upgrade_menu.turret:
         #     pass
@@ -528,6 +528,9 @@ while True:
             start_next_wave = wave_emitter.update_timer(delta)  # Spawns waves.
             if start_next_wave:
                 print_stats()
+                # On wave 15, make count down be higher.
+                if wave_emitter.current_wave == 15:
+                    wave_emitter.COUNT_DOWN = 5
 
     elif game_state == UPGRADE:
         draw_game(screen)

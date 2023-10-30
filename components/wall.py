@@ -2,7 +2,7 @@ import pygame
 
 
 class Wall(pygame.sprite.Sprite):
-    INITIAL_HEALTH = 10
+    INITIAL_HEALTH = 20
     INITIAL_MAX_HEALTH = 20
 
     health: float = INITIAL_HEALTH

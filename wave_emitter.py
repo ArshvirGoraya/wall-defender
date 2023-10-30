@@ -14,7 +14,7 @@ class WaveEmitter():
 
     current_time = COUNT_DOWN  # counts down to 0
 
-    final_wave = 100
+    final_wave = 30
 
     enemy_increment = 2
 
@@ -30,6 +30,7 @@ class WaveEmitter():
         return self.state == self.IN_WAVE
 
     def start_wave(self):
+        print(self.current_wave, ": ", self.get_incoming_enemies())
         for x in range(0, self.get_incoming_enemies()):
             self.game_components.spawn_enemy(self.current_wave)
 
