@@ -19,8 +19,10 @@ class GameComponents():
 
     INITIAL_BULLET_SPEED = 400
 
-    spawn_ammo_min = INITIAL_SPAWN_AMMO_MIN
-    spawn_ammo_max = INITIAL_SPAWN_AMMO_MAX
+    AMMO_SECONDS = 5
+
+    # spawn_ammo_min = INITIAL_SPAWN_AMMO_MIN
+    # spawn_ammo_max = INITIAL_SPAWN_AMMO_MAX
 
     bullet_speed = INITIAL_BULLET_SPEED
 
@@ -88,7 +90,7 @@ class GameComponents():
                 self.screen.get_rect(),
                 # send rect if wall sprite exist or none
                 self.wall.sprite.rect if self.wall.sprite != None else None,
-                randint(self.spawn_ammo_min, self.spawn_ammo_max),  # seconds
+                randint(self.AMMO_SECONDS, self.AMMO_SECONDS+5),  # seconds
             )
         )
 

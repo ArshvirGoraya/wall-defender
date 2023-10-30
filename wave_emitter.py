@@ -16,7 +16,7 @@ class WaveEmitter():
 
     final_wave = 100
 
-    enemy_increment = 10
+    enemy_increment = 2
 
     game_components: GameComponents
 

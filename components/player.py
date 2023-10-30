@@ -128,8 +128,9 @@ class Player(pygame.sprite.Sprite):
 
     def collision_check(self) -> None:
         # Increase ammo by the amount we collided with.
+        # For each 1 ammo, should get 5.
         self.ammo_count += pygame.sprite.spritecollide(
-            self, self.ammo_ref, True).__len__()
+            self, self.ammo_ref, True).__len__() * 5
 
         # Cant take damage while in wall mode:
         if self.move_state != self.IN_WALL:

@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
 
     ENEMY_SPACING = 1920 * 2
 
-    SPEED = 300
+    SPEED = 250
 
     def __init__(self, health, color, lefty, screen, ammo_reference, current_wave) -> None:
         super().__init__()  # Get inherited attributes and functions.

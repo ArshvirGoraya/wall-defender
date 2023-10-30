@@ -282,6 +282,7 @@ def update_ui():
 
 
 def restart_game(previous_wave=False):
+    global ammo_spawn_rate, INITIAL_AMMO_SPAWN_RATE
     # Reset player health to initial.
     # Reset ammo to initial.
 
@@ -318,6 +319,9 @@ def restart_game(previous_wave=False):
         game_components.get_wall().reset_to_initial()
         game_components.reset_to_initial()
         wave_emitter.reset_to_initial()
+        # Reset ammo timer
+        ammo_spawn_rate = INITIAL_AMMO_SPAWN_RATE
+        pygame.time.set_timer(event_ammo_spawn, ammo_spawn_rate)
         # Spawn ammo at game start:
         game_start()
 
@@ -358,14 +362,13 @@ def print_stats():
     #       game_components.get_player().speed)
     # print(wave_emitter.current_wave, ": shoot speed = ",
     #       game_components.get_player().shoot_wait_millis)
-    # print(wave_emitter.current_wave, ": ammo spawn rate = ",
-    #       game_components.spawn_ammo_min, ", ", game_components.spawn_ammo_max)
+    print(wave_emitter.current_wave, ": ammo spawn rate = ", ammo_spawn_rate)
     # print(wave_emitter.current_wave, ": bullet speed = ",
     #       game_components.bullet_speed)
-    pass
 
 
 def upgrade(button):
+    global ammo_spawn_rate
     match button:
         case upgrade_menu.ammo_cap:
             game_components.get_player().max_ammo += 100
@@ -385,32 +388,38 @@ def upgrade(button):
             game_components.get_player().shoot_wait_millis -= 0.05
 
         case upgrade_menu.ammo_spawn_rate:
-            game_components.spawn_ammo_min += 5
-            game_components.spawn_ammo_max += 5
+            ammo_spawn_rate = max(0, ammo_spawn_rate - 10)
+            # Emit event on timer.
+            pygame.time.set_timer(event_ammo_spawn, ammo_spawn_rate)
+
         ##
         case upgrade_menu.speed_bullet:
             game_components.bullet_speed += 10
+
 
         # case upgrade_menu.turret:
         #     pass
 # CUSTOM EVENTS ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
 # event_enemy_spawn = pygame.USEREVENT + 2
-pygame.time.set_timer(event_ammo_spawn, 1000)  # Emit event on timer.
+INITIAL_AMMO_SPAWN_RATE = 1000
+ammo_spawn_rate = INITIAL_AMMO_SPAWN_RATE
+# Emit event on timer.
+pygame.time.set_timer(event_ammo_spawn, ammo_spawn_rate)
 # pygame.time.set_timer(event_enemy_spawn, 1000)  # Emit event on timer.
 
 event_start_waves = pygame.USEREVENT + 2
 
 # For testing:
 
-TEST_WAVE: bool = True
-SKIP_OPENING: bool = False
+TEST_WAVE: bool = False
+SKIP_OPENING: bool = True
 
 if TEST_WAVE:
     if not SKIP_OPENING:
         SKIP_OPENING = True
     # Start at specified wave:
-    elapsed_waves = 50
+    elapsed_waves = 25
     # Get random upgrades for player by amount of waves.
     for wave in range(0, elapsed_waves):
         upgrade(
@@ -424,12 +433,16 @@ if TEST_WAVE:
                  upgrade_menu.ammo_cap]
             )
         )
-        # Start with half ammo
-        game_components.get_player().ammo_count = game_components.get_player().max_ammo / 2
-        # Save Variables
-        wave_emitter.set_wave_start_variables()
-        # Start the wave
-        wave_emitter.current_wave = elapsed_waves
+    # Start with half ammo
+    game_components.get_player().ammo_count = game_components.get_player().max_ammo / 2
+    # Save Variables
+    wave_emitter.set_wave_start_variables()
+    # Print stats (chosen upgrades):
+    print_stats()
+
+    # Start the wave
+    wave_emitter.current_wave = elapsed_waves
+
 
 if SKIP_OPENING:
     pygame.time.set_timer(event_start_waves, 10)  # Emit event on timer.
