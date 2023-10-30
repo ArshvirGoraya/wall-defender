@@ -36,6 +36,7 @@ class GameComponents():
             Player(
                 color=self.colors.get_player(),
                 screen=self.screen.get_rect(),
+                wall_reference=self.wall,
                 ammo_reference=self.ammo,
                 enemy_reference=self.enemy
             )

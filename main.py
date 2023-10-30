@@ -118,7 +118,14 @@ ui_timer = Text(
     pos=pygame.Vector2(screen_w/2, 80),
     centered=True
 )
-
+ui_wall_enter = Text(
+    color=colors.get_text(),
+    font_size=20,
+    text=f'enter',
+    pos=pygame.Vector2(game_components.get_player().rect.x,
+                       game_components.get_player().rect.y),
+    centered=False
+)
 
 ui.add(
     ui_ammo,
@@ -127,6 +134,7 @@ ui.add(
     ui_wave,
     ui_enemy_count,
     ui_timer,
+    ui_wall_enter
 )
 
 
@@ -212,7 +220,6 @@ def update_ui():
         ui_enemy_count.update_text(
             f'Amount: {game_components.enemy.__len__()}')
         ui_timer.update_text("")
-        pass
     else:
         ui_enemy_count.update_text(
             f'Incoming: {wave_emitter.get_incoming_enemies()}')
@@ -221,6 +228,16 @@ def update_ui():
         ui_timer.update_text(f'00:%02d' % (ceil(wave_emitter.current_time)))
         # autopep8: on
 
+    if game_components.get_player().is_near_wall():
+        if ui_wall_enter.text != "enter":
+            ui_wall_enter.update_text("enter")
+
+        ui_wall_enter.update_pos(pygame.Vector2(game_components.get_player().rect.x - 2,
+                                                game_components.get_player().rect.y - 20))
+
+    else:
+        if ui_wall_enter.text != "":
+            ui_wall_enter.update_text("")
 
 # Restart ###############################
 

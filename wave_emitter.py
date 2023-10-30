@@ -14,7 +14,7 @@ class WaveEmitter():
 
     current_time = COUNT_DOWN  # counts down to 0
 
-    final_wave = 2
+    final_wave = 100
 
     enemy_increment = 10
 

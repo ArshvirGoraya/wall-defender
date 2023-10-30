@@ -27,7 +27,13 @@ class Player(pygame.sprite.Sprite):
     running = False
     velocity = pygame.Vector2(0, 0)
 
-    def __init__(self, color, screen, ammo_reference, enemy_reference) -> None:
+    # STATES
+    IN_WALL = 0
+    NEAR_WALL = 1
+    OUT_WALL = 2
+    move_state = OUT_WALL
+
+    def __init__(self, color, screen, wall_reference, ammo_reference, enemy_reference) -> None:
         super().__init__()
 
         self.color = color
@@ -45,15 +51,27 @@ class Player(pygame.sprite.Sprite):
 
         self.ammo_ref = ammo_reference
         self.enemy_ref = enemy_reference
+        self.wall_ref = wall_reference
         self.screen = screen
 
     def update(self, delta) -> None:
         self.destroy_check()
         self.collision_check()
+        self.wall_check()
         self.movement(delta)
 
         if self.shoot_wait_current > 0:
             self.shoot_wait_current -= delta
+
+    def wall_check(self):
+        if self.move_state == self.IN_WALL:
+            return
+
+        # Wall left and right:
+        if (self.x_pos >= self.wall_ref.sprite.rect.left and self.x_pos <= self.wall_ref.sprite.rect.right):
+            self.move_state = self.NEAR_WALL
+        else:
+            self.move_state = self.OUT_WALL
 
     def can_shoot(self) -> bool:
         return self.shoot_wait_current <= 0
@@ -159,3 +177,6 @@ class Player(pygame.sprite.Sprite):
         self.max_ammo = variables["max_ammo"]
         self.speed = variables["speed"]
         self.shoot_wait_millis = variables["shoot_wait_millis"]
+
+    def is_near_wall(self) -> bool:
+        return self.move_state == self.NEAR_WALL

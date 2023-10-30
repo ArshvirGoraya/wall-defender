@@ -29,3 +29,11 @@ class Text(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
         else:
             self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))
+
+    def update_pos(self, pos: pygame.Vector2):
+        self.pos.x = pos.x
+        self.pos.y = pos.y
+        if self.centered:
+            self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
+        else:
+            self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))
