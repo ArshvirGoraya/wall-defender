@@ -2,7 +2,7 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
-    INITIAL_HEALTH = 10000
+    INITIAL_HEALTH = 1
     INITIAL_MAX_HEALTH = 10
 
     INITIAL_AMMO = 100000
@@ -131,8 +131,10 @@ class Player(pygame.sprite.Sprite):
         self.ammo_count += pygame.sprite.spritecollide(
             self, self.ammo_ref, True).__len__()
 
-        for enemy in pygame.sprite.spritecollide(self, self.enemy_ref, True):
-            self.health -= enemy.get_damage()
+        # Cant take damage while in wall mode:
+        if self.move_state != self.IN_WALL:
+            for enemy in pygame.sprite.spritecollide(self, self.enemy_ref, True):
+                self.health -= enemy.get_damage()
             # print("Player Health: ", self.health)
 
     def destroy_check(self) -> None:
@@ -209,6 +211,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(
             center=(self.x_pos, self.y_pos))
 
+        self.width = self.WIDTH
+
     def set_variables(self, variables: dict):
         self.health = variables["health"]
         self.max_health = variables["max_health"]
@@ -221,6 +225,12 @@ class Player(pygame.sprite.Sprite):
         self.rect = variables["rect"]
         self.x_pos = self.rect.x
         self.y_pos = self.rect.y
+
+        self.width = self.rect.width
+
+        # X's position should be in the middle of wall.
+        if self.move_state == self.IN_WALL:
+            self.x_pos = self.wall_ref.sprite.rect.x + self.wall_ref.sprite.rect.width / 2
 
     def is_near_wall(self) -> bool:
         return self.move_state == self.NEAR_WALL
