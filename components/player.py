@@ -2,7 +2,7 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
-    INITIAL_HEALTH = 10
+    INITIAL_HEALTH = 10000
     INITIAL_MAX_HEALTH = 10
 
     INITIAL_AMMO = 100000
@@ -33,12 +33,15 @@ class Player(pygame.sprite.Sprite):
     OUT_WALL = 2
     move_state = OUT_WALL
 
+    WIDTH = 30
+    HEIGHT = 30
+
     def __init__(self, color, screen, wall_reference, ammo_reference, enemy_reference) -> None:
         super().__init__()
 
         self.color = color
-        self.width = 30
-        self.height = 30
+        self.width = self.WIDTH
+        self.height = self.HEIGHT
 
         self.image = pygame.Surface((self.width, self.height))
         self.image.fill((color))
@@ -56,8 +59,8 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, delta) -> None:
         self.destroy_check()
-        self.collision_check()
         self.wall_check()
+        self.collision_check()
         self.movement(delta)
 
         if self.shoot_wait_current > 0:
@@ -75,6 +78,21 @@ class Player(pygame.sprite.Sprite):
         else:
             self.move_state = self.OUT_WALL
 
+    def enter_wall(self):
+        self.move_state = self.IN_WALL
+        # Set to width of wall.
+        self.width = self.wall_ref.sprite.rect.width
+
+        # Set x to middle of wall.
+        self.x_pos = self.wall_ref.sprite.rect.x + self.wall_ref.sprite.rect.width / 2
+
+        # asd
+
+    def exit_wall(self):
+        self.move_state = self.NEAR_WALL
+        #
+        self.width = self.WIDTH
+
     def can_shoot(self) -> bool:
         return self.shoot_wait_current <= 0
 
@@ -86,10 +104,13 @@ class Player(pygame.sprite.Sprite):
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_i] or keys[pygame.K_UP]:
-            direction.y += -1
-        if keys[pygame.K_k] or keys[pygame.K_DOWN]:
-            direction.y += 1
+        # Cant shoot vertically when in wall
+        if self.move_state != self.IN_WALL:
+            if keys[pygame.K_i] or keys[pygame.K_UP]:
+                direction.y += -1
+            if keys[pygame.K_k] or keys[pygame.K_DOWN]:
+                direction.y += 1
+
         if keys[pygame.K_l] or keys[pygame.K_RIGHT]:
             direction.x += 1
         if keys[pygame.K_j] or keys[pygame.K_LEFT]:
@@ -127,10 +148,13 @@ class Player(pygame.sprite.Sprite):
             direction.y += -1
         if keys[pygame.K_s]:
             direction.y += 1
-        if keys[pygame.K_d]:
-            direction.x += 1
-        if keys[pygame.K_a]:
-            direction.x += -1
+
+        # Cant move horizontally when in wall.
+        if self.move_state != self.IN_WALL:
+            if keys[pygame.K_d]:
+                direction.x += 1
+            if keys[pygame.K_a]:
+                direction.x += -1
 
         self.running = keys[pygame.K_LSHIFT]
 
@@ -140,6 +164,9 @@ class Player(pygame.sprite.Sprite):
             # Delta: frame-rate independent.
             # velocity = direction.normalize() * ((self.speed) * delta) # no specials
             speed = self.speed
+            # Move faster when in wall:
+            if self.move_state == self.IN_WALL:
+                speed *= 2
             if self.running:
                 speed *= 2
 
@@ -161,6 +188,9 @@ class Player(pygame.sprite.Sprite):
             )
 
         # Set new position: (drawn here)
+        self.image = pygame.Surface((self.width, self.height))
+        self.image.fill((self.color))
+
         self.rect = self.image.get_rect(
             center=(self.x_pos, self.y_pos))
 

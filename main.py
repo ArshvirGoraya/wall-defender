@@ -317,6 +317,15 @@ while True:
             if event.type == event_ammo_spawn:
                 game_components.spawn_ammo()
 
+            if event.type == pygame.KEYDOWN and (event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+                if game_components.get_player() != None:
+                    if game_components.get_player().move_state == game_components.get_player().NEAR_WALL:
+                        # enter wall
+                        game_components.get_player().enter_wall()
+                    elif game_components.get_player().move_state == game_components.get_player().IN_WALL:
+                        # exit wall
+                        game_components.get_player().exit_wall()
+
             # elif event.type == event_enemy_spawn:
             #     game_components.spawn_enemy()
 
