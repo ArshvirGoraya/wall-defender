@@ -19,5 +19,13 @@ class Text(pygame.sprite.Sprite):
         else:
             self.rect = self.image.get_rect(topleft=(pos.x, pos.y))
 
+        self.centered = centered
+        self.pos = pos
+
     def update_text(self, new_text):
         self.image = self.font.render(new_text, True, self.color)
+
+        if self.centered:
+            self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
+        else:
+            self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))

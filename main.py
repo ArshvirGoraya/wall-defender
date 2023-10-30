@@ -100,7 +100,7 @@ ui_wave = Text(
     color=colors.get_text(),
     font_size=40,
     text=f'Wave: {wave_emitter.current_wave} / {
-        wave_emitter.last_wave}',
+        wave_emitter.final_wave}',
     pos=pygame.Vector2(screen_w/2, 20),
     centered=True
 )
@@ -137,8 +137,11 @@ previous_time = time.time()  # For delta time (frame-rate independent).
 
 
 def game_start():
-    # Inital ammo
-    for x in range(random.randint(5, 10)):
+    spawn_ammo(random.randint(5, 10))
+
+
+def spawn_ammo(amount):
+    for x in range(0, amount):
         game_components.spawn_ammo()
 
 
@@ -198,8 +201,12 @@ def update_ui():
         # If wall is dead: fail
         game_state = FAIL
 
-    ui_wave.update_text(f'Wave: {wave_emitter.current_wave} / {
-        wave_emitter.last_wave}')
+    if not in_endless_mode:
+
+        ui_wave.update_text(f'Wave: {wave_emitter.current_wave} / {
+            wave_emitter.final_wave}')
+    else:
+        ui_wave.update_text(f'Wave: {wave_emitter.current_wave}')
 
     if wave_emitter.is_in_wave():
         ui_enemy_count.update_text(
@@ -258,6 +265,7 @@ UPGRADE = 5
 
 game_state = START
 
+in_endless_mode: bool = False
 
 unpause_game_state = game_state
 while True:
@@ -289,9 +297,15 @@ while True:
                     game_state = PAUSE
 
             # TESTING:
-            # elif event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_SPACE:
-            #         game_state = WIN
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game_state = WIN
+
+    if game_state == GAME and not in_endless_mode:
+        # Check if won game:
+        if wave_emitter.current_wave == wave_emitter.final_wave:
+            game_state = WIN
+        # Don't want the rest of == GAME condition to run from this!
 
     if game_state == GAME:
         draw_game(screen)
@@ -301,6 +315,9 @@ while True:
             # Check if wave has ended.
             if not game_components.enemy.__len__():
                 wave_emitter.start_count_to_next_wave()
+                spawn_ammo(random.randint(
+                    int(wave_emitter.get_incoming_enemies() / 2),
+                    int(wave_emitter.get_incoming_enemies())))
         else:
             wave_emitter.update_timer(delta, game_components)  # Spawns waves.
 
@@ -326,6 +343,7 @@ while True:
 
         if button_endless.sprite.detect_click():
             game_state = GAME
+            in_endless_mode = True
 
     elif game_state == FAIL:
         draw_game(screen)
