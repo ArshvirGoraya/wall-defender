@@ -7,7 +7,11 @@ class Enemy(pygame.sprite.Sprite):
     HEIGHT = 50
     DAMAGE = 1
 
-    def __init__(self, speed, health, color, lefty, screen, ammo_reference) -> None:
+    ENEMY_SPACING = 1920 * 2
+
+    SPEED = 300
+
+    def __init__(self, health, color, lefty, screen, ammo_reference, current_wave) -> None:
         super().__init__()  # Get inherited attributes and functions.
 
         # Defining bounding box to screen.
@@ -27,15 +31,17 @@ class Enemy(pygame.sprite.Sprite):
 
         y = randint(self.top_limit, self.bottom_limit)
         if lefty:  # If lefty, will spawn left and move right.
-            x = self.left_limit - randint(0, 125)
+            x = self.left_limit - \
+                randint(0, (self.ENEMY_SPACING + current_wave*4))
         else:
-            x = self.right_limit + randint(0, 125)
+            x = self.right_limit + \
+                randint(0, (self.ENEMY_SPACING + current_wave*4))
         self.rect = self.image.get_rect(topleft=(x, y))
 
         self.x_pos = x  # Required to avoid integer truncating for self.rect.x
         self.y_pos = y
 
-        self.speed = speed
+        self.speed = self.SPEED + (current_wave * 2)
         self.health = health
 
         self.ammo_ref = ammo_reference

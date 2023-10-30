@@ -344,7 +344,7 @@ def prompt_upgrade(screen) -> bool:
 
     return False
 
-# For debugging:
+# For debugging upgrades:
 
 
 def print_stats():
@@ -360,9 +360,8 @@ def print_stats():
     #       game_components.get_player().shoot_wait_millis)
     # print(wave_emitter.current_wave, ": ammo spawn rate = ",
     #       game_components.spawn_ammo_min, ", ", game_components.spawn_ammo_max)
-    print(wave_emitter.current_wave, ": bullet speed = ",
-          game_components.bullet_speed)
-
+    # print(wave_emitter.current_wave, ": bullet speed = ",
+    #       game_components.bullet_speed)
     pass
 
 
@@ -380,16 +379,15 @@ def upgrade(button):
             game_components.get_wall().health = game_components.get_wall().max_health
         ##
         case upgrade_menu.speed_up:
-            game_components.get_player().speed += 10
+            game_components.get_player().speed += 20
 
         case upgrade_menu.speed_shoot:
-            game_components.get_player().shoot_wait_millis -= 0.01
+            game_components.get_player().shoot_wait_millis -= 0.05
 
         case upgrade_menu.ammo_spawn_rate:
             game_components.spawn_ammo_min += 5
             game_components.spawn_ammo_max += 5
         ##
-
         case upgrade_menu.speed_bullet:
             game_components.bullet_speed += 10
 
@@ -402,7 +400,37 @@ pygame.time.set_timer(event_ammo_spawn, 1000)  # Emit event on timer.
 # pygame.time.set_timer(event_enemy_spawn, 1000)  # Emit event on timer.
 
 event_start_waves = pygame.USEREVENT + 2
-SKIP_OPENING: bool = True
+
+# For testing:
+
+TEST_WAVE: bool = True
+SKIP_OPENING: bool = False
+
+if TEST_WAVE:
+    if not SKIP_OPENING:
+        SKIP_OPENING = True
+    # Start at specified wave:
+    elapsed_waves = 50
+    # Get random upgrades for player by amount of waves.
+    for wave in range(0, elapsed_waves):
+        upgrade(
+            random.choice(
+                [upgrade_menu.speed_bullet,
+                 upgrade_menu.ammo_spawn_rate,
+                 upgrade_menu.speed_shoot,
+                 upgrade_menu.speed_up,
+                 upgrade_menu.health_wall,
+                 upgrade_menu.health_player,
+                 upgrade_menu.ammo_cap]
+            )
+        )
+        # Start with half ammo
+        game_components.get_player().ammo_count = game_components.get_player().max_ammo / 2
+        # Save Variables
+        wave_emitter.set_wave_start_variables()
+        # Start the wave
+        wave_emitter.current_wave = elapsed_waves
+
 if SKIP_OPENING:
     pygame.time.set_timer(event_start_waves, 10)  # Emit event on timer.
 else:
@@ -418,10 +446,10 @@ WIN = 4
 UPGRADE = 5
 
 game_state = START
+unpause_game_state = game_state
 
 in_endless_mode: bool = False
 
-unpause_game_state = game_state
 while True:
     delta = time.time() - previous_time
     previous_time = time.time()

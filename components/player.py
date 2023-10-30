@@ -2,13 +2,13 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
-    INITIAL_HEALTH = 1
+    INITIAL_HEALTH = 10
     INITIAL_MAX_HEALTH = 10
 
-    INITIAL_AMMO = 100000
-    INITIAL_MAX_AMMO = 100001
+    INITIAL_AMMO = 10
+    INITIAL_MAX_AMMO = 50
 
-    INITIAL_SPEED = 250
+    INITIAL_SPEED = 150
 
     INITIAL_SHOOT_WAIT_TIME = 0.5
 

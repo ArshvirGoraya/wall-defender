@@ -68,15 +68,15 @@ class GameComponents():
 
     # ENEMY ###############################
 
-    def spawn_enemy(self) -> None:
+    def spawn_enemy(self, current_wave) -> None:
         self.enemy.add(
             Enemy(
-                speed=300,
                 health=10,
                 color=self.colors.get_enemy(),
                 lefty=randint(0, 1),
                 screen=self.screen.get_rect(),
-                ammo_reference=self.ammo
+                ammo_reference=self.ammo,
+                current_wave=current_wave
             )
         )
     # AMMO ###############################

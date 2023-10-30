@@ -31,7 +31,7 @@ class WaveEmitter():
 
     def start_wave(self):
         for x in range(0, self.get_incoming_enemies()):
-            self.game_components.spawn_enemy()
+            self.game_components.spawn_enemy(self.current_wave)
 
     def get_incoming_enemies(self):
         return self.enemy_increment * (self.current_wave + 1)
