@@ -97,24 +97,25 @@ class GameComponents():
         )
 
     # BULLET ###############################
-    def spawn_bullet(self, bullet_direction: pygame.Vector2) -> None:
+    def spawn_bullet(self, bullet_direction: pygame.Vector2, position: pygame.Vector2) -> None:
         self.bullet.add(
             Bullet(
                 speed=self.bullet_speed,
                 color=self.colors.get_player(),
-                player_pos=pygame.Vector2(
-                    self.player.sprite.x_pos, self.player.sprite.y_pos),
+                player_pos=position,
                 direction=bullet_direction,
                 enemy_reference=self.enemy,
                 screen=self.screen.get_rect()
             )
         )
 
-    def spawn_turret(self, screen):
+    def spawn_turret(self, screen_width, screen_height):
         self.turret.add(
             Turret(
-                screen,
-                5,
+                5,  # wait time
+                screen_width,
+                screen_height,
+                self,
             )
         )
 

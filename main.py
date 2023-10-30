@@ -211,6 +211,8 @@ def update_game(delta) -> None:
     # Update all spawned bullets:
     game_components.bullet.update(delta)
 
+    game_components.turret.update(delta)
+
     # Spawn bullet if player has shot:
     # If player has ammo,
     # check if is shooting and get direction of shot.
@@ -218,7 +220,8 @@ def update_game(delta) -> None:
         if game_components.player.sprite.ammo_count:
             bullet_direction = game_components.player.sprite.shooting()
             if bullet_direction.length() != 0:
-                game_components.spawn_bullet(bullet_direction)
+                game_components.spawn_bullet(bullet_direction, pygame.Vector2(
+                    game_components.player.sprite.x_pos, game_components.player.sprite.y_pos))
 
     update_ui()
 
@@ -319,6 +322,7 @@ def restart_game(previous_wave=False):
         game_components.get_wall().reset_to_initial()
         game_components.reset_to_initial()
         wave_emitter.reset_to_initial()
+        game_components.turret.empty()
         # Reset ammo timer
         ammo_spawn_rate = INITIAL_AMMO_SPAWN_RATE
         pygame.time.set_timer(event_ammo_spawn, ammo_spawn_rate)
@@ -397,8 +401,8 @@ def upgrade(button):
         case upgrade_menu.speed_bullet:
             game_components.bullet_speed += 50
 
-        # case upgrade_menu.turret:
-        #     pass
+        case upgrade_menu.turret:
+            game_components.spawn_turret(screen_w, screen_h)
 # TURRETS ###############################
 
 
@@ -433,7 +437,8 @@ if TEST_WAVE:
                  upgrade_menu.speed_up,
                  upgrade_menu.health_wall,
                  upgrade_menu.health_player,
-                 upgrade_menu.ammo_cap]
+                 upgrade_menu.ammo_cap,
+                 upgrade_menu.turret]
             )
         )
     # Start with half ammo
@@ -509,9 +514,9 @@ while True:
                     game_state = PAUSE
 
             # TESTING:
-            # elif event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_SPACE:
-            #         game_state = UPGRADE
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game_state = UPGRADE
 
     if game_state == GAME:
         draw_game(screen)
