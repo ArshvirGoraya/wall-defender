@@ -10,8 +10,11 @@ class WaveEmitter():
     state = WAIT_WAVE
 
     current_wave = 0
-    current_time = 0
-    WAIT_TIMER = 1  # secs
+    COUNT_DOWN = 2
+
+    current_time = COUNT_DOWN  # counts down to 0
+
+    last_wave = 100
 
     enemy_increment = 10
 
@@ -20,25 +23,24 @@ class WaveEmitter():
 
     def start_wave(self, game_components: GameComponents):
         print("STARTING WAVE!")
-        for x in range(1, self.get_incoming_enemies()):
+        for x in range(0, self.get_incoming_enemies()):
             game_components.spawn_enemy()
 
     def get_incoming_enemies(self):
-        return self.enemy_increment * self.current_wave + 1
+        return self.enemy_increment * (self.current_wave + 1)
 
     def update_timer(self, delta, game_components: GameComponents):
         if self.state == self.IN_WAVE:  # Timer should not increment while in wave.
             return
 
-        self.current_time += delta
+        self.current_time = max(0, self.current_time - delta)
 
-        if self.current_time >= self.WAIT_TIMER:
-            self.current_wave += 1
+        if self.current_time <= 0:
             self.state = self.IN_WAVE
             self.start_wave(game_components)
-
-            self.current_time = 0
+            self.current_wave += 1  # Make sure this is below start_wave!
 
     def start_count_to_next_wave(self):
-        print("counting to next wave!")
+        # print("counting to next wave!")
+        self.current_time = self.COUNT_DOWN
         self.state = self.WAIT_WAVE

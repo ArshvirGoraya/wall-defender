@@ -34,6 +34,7 @@ class Player(pygame.sprite.Sprite):
 
         self.ammo_ref = ammo_reference
         self.enemy_ref = enemy_reference
+        self.screen = screen
 
     def update(self, delta) -> None:
         self.destroy_check()
@@ -115,6 +116,19 @@ class Player(pygame.sprite.Sprite):
             self.x_pos += self.velocity.x
             self.y_pos += self.velocity.y
 
-        # Set new position:
+            # X limits
+            self.x_pos = pygame.math.clamp(
+                self.x_pos,
+                0,
+                self.screen.width,
+            )
+            # Y limits
+            self.y_pos = pygame.math.clamp(
+                self.y_pos,
+                0 + self.height / 2,
+                self.screen.height - self.height / 2,
+            )
+
+        # Set new position: (drawn here)
         self.rect = self.image.get_rect(
             center=(self.x_pos, self.y_pos))

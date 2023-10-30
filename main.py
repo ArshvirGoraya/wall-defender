@@ -2,6 +2,7 @@ import pygame
 import random
 # import array as arr  # Incase: don't want to use lists.
 import time
+from math import ceil
 #
 from color_schemes import ColorScheme
 from game_components import GameComponents
@@ -18,6 +19,7 @@ from ui.health_bar import HealthBar
 #
 from wave_emitter import WaveEmitter
 
+
 pygame.init()
 
 # Window Info ###############################
@@ -27,8 +29,8 @@ pygame.display.set_icon(pygame.image.load("assets/icon.png"))
 # Screen Display ###########################
 screen_w = 1920 * 0.8
 screen_h = 1080 * 0.8
-# screen = pygame.display.set_mode((screen_w, screen_h))
-screen = pygame.display.set_mode((screen_w, screen_h), pygame.RESIZABLE)
+screen = pygame.display.set_mode((screen_w, screen_h))
+# screen = pygame.display.set_mode((screen_w, screen_h), pygame.RESIZABLE)
 # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 # Colors
@@ -37,6 +39,7 @@ colors = ColorScheme(ColorScheme.S_DARK)
 
 # Player, Ammo, Wall, Enemies, Bullets, etc.
 game_components = GameComponents(colors, screen)
+wave_emitter = WaveEmitter()
 
 # MENU STUFF ###############################
 start_menu = StartMenu(screen, colors)
@@ -93,11 +96,37 @@ ui_wall_health = HealthBar(
     game_components.get_wall().health,
     game_components.get_wall().max_health
 )
+ui_wave = Text(
+    color=colors.get_text(),
+    font_size=40,
+    text=f'Wave: {wave_emitter.current_wave} / {
+        wave_emitter.last_wave}',
+    pos=pygame.Vector2(screen_w/2, 20),
+    centered=True
+)
+ui_enemy_count = Text(
+    color=colors.get_text(),
+    font_size=40,
+    text=f'Incoming: {wave_emitter.get_incoming_enemies()}',
+    pos=pygame.Vector2(screen_w/2, 50),
+    centered=True
+)
+ui_timer = Text(
+    color=colors.get_text(),
+    font_size=40,
+    text=f'{wave_emitter.current_time * 1000}',
+    pos=pygame.Vector2(screen_w/2, 80),
+    centered=True
+)
+
 
 ui.add(
     ui_ammo,
     ui_player_health,
-    ui_wall_health
+    ui_wall_health,
+    ui_wave,
+    ui_enemy_count,
+    ui_timer,
 )
 
 
@@ -169,8 +198,25 @@ def update_ui():
         # If wall is dead: fail
         game_state = FAIL
 
+    ui_wave.update_text(f'Wave: {wave_emitter.current_wave} / {
+        wave_emitter.last_wave}')
+
+    if wave_emitter.is_in_wave():
+        ui_enemy_count.update_text(
+            f'Amount: {game_components.enemy.__len__()}')
+        ui_timer.update_text("")
+        pass
+    else:
+        ui_enemy_count.update_text(
+            f'Incoming: {wave_emitter.get_incoming_enemies()}')
+
+        # autopep8: off # adds spaces after ':'
+        ui_timer.update_text(f'00:%02d' % (ceil(wave_emitter.current_time)))
+        # autopep8: on
+
 
 # Restart ###############################
+
 
 def restart_game(previous_wave=False):
     # Reset player position to initial.
@@ -200,7 +246,6 @@ event_ammo_spawn = pygame.USEREVENT + 1
 pygame.time.set_timer(event_ammo_spawn, 1000)  # Emit event on timer.
 # pygame.time.set_timer(event_enemy_spawn, 1000)  # Emit event on timer.
 
-wave_emitter = WaveEmitter()
 
 # Game States ###############################
 # Enum: Game States (don't want/need enum import)
