@@ -2,8 +2,11 @@ import pygame
 
 
 class Wall(pygame.sprite.Sprite):
-    health: float = 1000
-    max_health: float = 10
+    INITIAL_HEALTH = 1000
+    INITIAL_MAX_HEALTH = 10
+
+    health: float = INITIAL_HEALTH
+    max_health: float = INITIAL_MAX_HEALTH
 
     def __init__(self, color, screen, enemy_reference) -> None:
         super().__init__()  # Get inherited attributes and functions.
@@ -20,6 +23,7 @@ class Wall(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topright=(screen.width / 2, 0))
 
         self.enemy_ref = enemy_reference
+        self.screen = screen
 
     def update(self) -> None:
         self.destroy_check()
@@ -38,3 +42,12 @@ class Wall(pygame.sprite.Sprite):
     def destroy_check(self) -> None:
         if self.health <= 0:
             self.kill()
+
+    def reset_to_initial(self) -> None:
+        self.health = self.INITIAL_HEALTH
+        self.max_health = self.INITIAL_MAX_HEALTH
+        # self.rect = self.image.get_rect(topright=(self.screen.width / 2, 0))
+
+    def set_variables(self, variables: dict):
+        self.health = variables["health"]
+        self.max_health = variables["max_health"]

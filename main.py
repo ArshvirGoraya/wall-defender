@@ -39,7 +39,7 @@ colors = ColorScheme(ColorScheme.S_DARK)
 
 # Player, Ammo, Wall, Enemies, Bullets, etc.
 game_components = GameComponents(colors, screen)
-wave_emitter = WaveEmitter()
+wave_emitter = WaveEmitter(game_components)
 
 # MENU STUFF ###############################
 start_menu = StartMenu(screen, colors)
@@ -226,25 +226,39 @@ def update_ui():
 
 
 def restart_game(previous_wave=False):
-    # Reset player position to initial.
     # Reset player health to initial.
     # Reset ammo to initial.
-    # Despawn all enemies.
-    # Despawn all ammo.
 
-    if not previous_wave:
-        # Re-create player/wall (if needed) and assign initial health.
-        if not game_components.get_player():
-            game_components.create_player()
-        game_components.get_player().health = 10
+    # Despawn enemies and ammo:
+    game_components.enemy.empty()
+    game_components.ammo.empty()
 
-        if not game_components.get_wall():
-            game_components.create_wall()
-        game_components.get_wall().health = 10
+    # Re-create player/wall (if needed) and assign initial health.
+    if not game_components.get_player():
+        game_components.create_player()
+    if not game_components.get_wall():
+        game_components.create_wall()
 
-        # Despawn enemies and ammo:
-        game_components.enemy.empty()
-        game_components.ammo.empty()
+    if previous_wave:
+        wave_emitter.set_to_wave((wave_emitter.current_wave - 1))
+
+        game_components.get_wall().set_variables(
+            wave_emitter.get_wave_start_wall_vars()
+        )
+
+        game_components.get_player().set_variables(
+            wave_emitter.get_wave_start_player_vars()
+        )
+        # Spawn appropariate amount of ammo for the coming wave:
+        spawn_ammo(random.randint(
+            int(wave_emitter.get_incoming_enemies() / 2),
+            int(wave_emitter.get_incoming_enemies())))
+    else:
+        game_components.get_player().reset_to_initial()
+        game_components.get_wall().reset_to_initial()
+        wave_emitter.reset_to_initial()
+        # Spawn ammo at game start:
+        game_start()
 
 
 # CUSTOM EVENTS ###############################
@@ -318,7 +332,7 @@ while True:
                     int(wave_emitter.get_incoming_enemies() / 2),
                     int(wave_emitter.get_incoming_enemies())))
         else:
-            wave_emitter.update_timer(delta, game_components)  # Spawns waves.
+            wave_emitter.update_timer(delta)  # Spawns waves.
 
     elif game_state == UPGRADE:
         pass
@@ -360,7 +374,7 @@ while True:
             restart_game()
             game_state = GAME
         elif button_restart_last.sprite.detect_click():
-            restart_game()
+            restart_game(True)
             game_state = GAME
 
     elif game_state == START:

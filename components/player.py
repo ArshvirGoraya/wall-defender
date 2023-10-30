@@ -2,18 +2,29 @@ import pygame
 
 
 class Player(pygame.sprite.Sprite):
-    health: float = 10
-    max_health: float = 10
+    INITIAL_HEALTH = 10
+    INITIAL_MAX_HEALTH = 10
 
-    speed = 250
-    running = False
-    ammo_count: int = 100000
-    max_ammo: int = 100001
+    INITIAL_AMMO = 100000
+    INITIAL_MAX_AMMO = 100001
+
+    INITIAL_SPEED = 250
+
+    INITIAL_SHOOT_WAIT_TIME = 0.5
+
+    health: float = INITIAL_HEALTH
+    max_health: float = INITIAL_MAX_HEALTH
+
+    ammo_count: int = INITIAL_AMMO
+    max_ammo: int = INITIAL_MAX_AMMO
+
+    speed = INITIAL_SPEED
 
     # Shoot wait time:
-    shoot_wait_millis = 0.5
+    shoot_wait_millis = INITIAL_SHOOT_WAIT_TIME
     shoot_wait_current = 0
 
+    running = False
     velocity = pygame.Vector2(0, 0)
 
     def __init__(self, color, screen, ammo_reference, enemy_reference) -> None:
@@ -132,3 +143,19 @@ class Player(pygame.sprite.Sprite):
         # Set new position: (drawn here)
         self.rect = self.image.get_rect(
             center=(self.x_pos, self.y_pos))
+
+    def reset_to_initial(self):
+        self.health = self.INITIAL_HEALTH
+        self.max_health = self.INITIAL_MAX_HEALTH
+        self.ammo_count = self.INITIAL_AMMO
+        self.max_ammo = self.INITIAL_MAX_AMMO
+        self.speed = self.INITIAL_SPEED
+        self.shoot_wait_millis = self.INITIAL_SHOOT_WAIT_TIME
+
+    def set_variables(self, variables: dict):
+        self.health = variables["health"]
+        self.max_health = variables["max_health"]
+        self.ammo_count = variables["ammo_count"]
+        self.max_ammo = variables["max_ammo"]
+        self.speed = variables["speed"]
+        self.shoot_wait_millis = variables["shoot_wait_millis"]
