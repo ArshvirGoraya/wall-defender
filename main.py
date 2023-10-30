@@ -509,9 +509,9 @@ while True:
                     game_state = PAUSE
 
             # TESTING:
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    game_state = UPGRADE
+            # elif event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE:
+            #         game_state = UPGRADE
 
     if game_state == GAME:
         draw_game(screen)
