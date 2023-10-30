@@ -20,6 +20,8 @@ class WaveEmitter():
 
     game_components: GameComponents
 
+    active: bool = False
+
     def __init__(self, game_components) -> None:
         self.game_components = game_components
         self.set_wave_start_variables()
@@ -36,7 +38,8 @@ class WaveEmitter():
         return self.enemy_increment * (self.current_wave + 1)
 
     def update_timer(self, delta,):
-        if self.state == self.IN_WAVE:  # Timer should not increment while in wave.
+        # Timer should not increment while in wave.
+        if not self.active or self.state == self.IN_WAVE:
             return
 
         self.current_time = max(0, self.current_time - delta)

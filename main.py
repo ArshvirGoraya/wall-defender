@@ -137,7 +137,40 @@ ui.add(
     ui_wall_enter
 )
 
-
+starting_text = pygame.sprite.Group()
+STARTING_TEXT_SIZE = 40
+# STARTING_TEXT_POS = pygame.Vector2(screen_w/2, screen_h/2)
+STARTING_TEXT_CENTERED = True
+starting_text.add(
+    Text(
+        color=colors.get_text(),
+        font_size=STARTING_TEXT_SIZE,
+        text=f'incoming enemies...',
+        pos=pygame.Vector2(screen_w/2, screen_h/2),
+        centered=STARTING_TEXT_CENTERED
+    ),
+    Text(
+        color=colors.get_text(),
+        font_size=STARTING_TEXT_SIZE,
+        text=f'pick up ammo...',
+        pos=pygame.Vector2(screen_w/2, screen_h/2 + (40 * 1)),
+        centered=STARTING_TEXT_CENTERED
+    ),
+    Text(
+        color=colors.get_text(),
+        font_size=STARTING_TEXT_SIZE,
+        text=f'destroy them...',
+        pos=pygame.Vector2(screen_w/2, screen_h/2 + (40 * 2)),
+        centered=STARTING_TEXT_CENTERED
+    ),
+    Text(
+        color=colors.get_text(),
+        font_size=STARTING_TEXT_SIZE,
+        text=f'defend the wall...',
+        pos=pygame.Vector2(screen_w/2, screen_h/2 + (40 * 3)),
+        centered=STARTING_TEXT_CENTERED
+    )
+)
 #######################################
 # Delta Time:
 clock = pygame.time.Clock()  # To limit frame rate.
@@ -188,6 +221,9 @@ def update_game(delta) -> None:
 
 def draw_ui():
     ui.draw(screen)
+    # If waves are not active = game just started. display starting text.
+    if not wave_emitter.active:
+        starting_text.draw(screen)
 
 
 def update_ui():
@@ -287,6 +323,9 @@ event_ammo_spawn = pygame.USEREVENT + 1
 pygame.time.set_timer(event_ammo_spawn, 1000)  # Emit event on timer.
 # pygame.time.set_timer(event_enemy_spawn, 1000)  # Emit event on timer.
 
+event_start_waves = pygame.USEREVENT + 2
+pygame.time.set_timer(event_start_waves, 10000)  # Emit event on timer.
+
 
 # Game States ###############################
 # Enum: Game States (don't want/need enum import)
@@ -326,8 +365,13 @@ while True:
                         # exit wall
                         game_components.get_player().exit_wall()
 
-            # elif event.type == event_enemy_spawn:
-            #     game_components.spawn_enemy()
+            if event.type == event_start_waves:
+                # setting to 0 deletes the event.
+                pygame.time.set_timer(event_start_waves, 0)
+                print("starting waves!")
+                starting_text.empty()
+                # Start waves...
+                wave_emitter.active = True
 
         # When not in start menu (escape menu access)
         if game_state != START:
@@ -340,11 +384,12 @@ while True:
                     game_state = PAUSE
 
             # TESTING:
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    game_state = WIN
+            # elif event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE:
+            #         game_state = WIN
 
     if game_state == GAME:
+
         draw_game(screen)
         update_game(delta)
 
@@ -418,4 +463,4 @@ while True:
             game_start()
 
     pygame.display.update()
-    clock.tick(60)  # FPS limited
+    # clock.tick(60)  # FPS limited
