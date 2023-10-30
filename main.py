@@ -343,17 +343,53 @@ def prompt_upgrade(screen) -> bool:
 
     return False
 
+# For debugging:
+
+
+def print_stats():
+    # print(wave_emitter.current_wave, ": ammo_cap = ",
+    #       game_components.get_player().max_ammo)
+    # print(wave_emitter.current_wave, ": player health = ",
+    #       game_components.get_player().max_health)
+    # print(wave_emitter.current_wave, ": wall health = ",
+    #       game_components.get_wall().max_health)
+    # print(wave_emitter.current_wave, ": player speed = ",
+    #       game_components.get_player().speed)
+    print(wave_emitter.current_wave, ": shoot speed = ",
+          game_components.get_player().shoot_wait_millis)
+
+    pass
+
 
 def upgrade(button):
     match button:
-        case upgrade_menu.speed_up:
-            pass
         case upgrade_menu.ammo_cap:
-            pass
+            game_components.get_player().max_ammo += 100
+        ##
+        case upgrade_menu.health_player:
+            game_components.get_player().max_health += 10
+            game_components.get_player().health = game_components.get_player().max_health
+
+        case upgrade_menu.health_wall:
+            game_components.get_wall().max_health += 10
+            game_components.get_wall().health = game_components.get_wall().max_health
+        ##
+        case upgrade_menu.speed_up:
+            game_components.get_player().speed += 10
+
+        case upgrade_menu.speed_shoot:
+            game_components.get_player().shoot_wait_millis -= 0.01
+
         case upgrade_menu.ammo_spawn_rate:
-            pass
+            print("ammo_spawn_rate upgrade!")
+        ##
+
+        case upgrade_menu.speed_bullet:
+            print("speed_bullet upgrade!")
 
 
+        # case upgrade_menu.turret:
+        #     pass
 # CUSTOM EVENTS ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
 # event_enemy_spawn = pygame.USEREVENT + 2
@@ -408,7 +444,7 @@ while True:
             if event.type == event_start_waves:
                 # setting to 0 deletes the event.
                 pygame.time.set_timer(event_start_waves, 0)
-                print("starting waves!")
+                # print("starting waves!")
                 starting_text.empty()
                 # Start waves...
                 wave_emitter.active = True
@@ -429,7 +465,6 @@ while True:
                     game_state = UPGRADE
 
     if game_state == GAME:
-
         draw_game(screen)
         update_game(delta)
 
@@ -444,7 +479,9 @@ while True:
                 game_state = UPGRADE
                 # start_next_wave_count()
         else:
-            wave_emitter.update_timer(delta)  # Spawns waves.
+            start_next_wave = wave_emitter.update_timer(delta)  # Spawns waves.
+            if start_next_wave:
+                print_stats()
 
     elif game_state == UPGRADE:
         draw_game(screen)

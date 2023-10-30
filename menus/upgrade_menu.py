@@ -41,7 +41,7 @@ class UpgradeMenu():
         self.health_player = pygame.sprite.GroupSingle()
         self.health_wall = pygame.sprite.GroupSingle()
         # Turret 0_0
-        self.turret = pygame.sprite.GroupSingle()
+        # self.turret = pygame.sprite.GroupSingle()
 
         self.buttons = {
             self.health_player: "Player Health + 1",
@@ -51,7 +51,7 @@ class UpgradeMenu():
             self.speed_up: "Speed + 1",
             self.speed_shoot: "Shoot Speed + 1",
             self.speed_bullet: "Bullet Speed + 1",
-            self.turret: "Turret + 1",
+            # self.turret: "Turret + 1",
         }
         button_count = 0
         for button in self.buttons:

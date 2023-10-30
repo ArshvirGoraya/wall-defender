@@ -62,7 +62,7 @@ class Ammo(pygame.sprite.Sprite):
         self.end_time = self.start_time + secs
 
     def update(self, delta) -> None:
-        # self.rotate(delta)
+        self.rotate(delta)
         self.start_time += delta
         self.destroy_check()
 

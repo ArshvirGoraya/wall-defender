@@ -36,10 +36,10 @@ class WaveEmitter():
     def get_incoming_enemies(self):
         return self.enemy_increment * (self.current_wave + 1)
 
-    def update_timer(self, delta,):
+    def update_timer(self, delta) -> bool:
         # Timer should not increment while in wave.
         if not self.active or self.state == self.IN_WAVE:
-            return
+            return False
 
         self.current_time = max(0, self.current_time - delta)
 
@@ -47,6 +47,8 @@ class WaveEmitter():
             self.state = self.IN_WAVE
             self.start_wave()
             self.current_wave += 1  # Make sure this is below start_wave!
+            return True  # True = indictaes to called that we are starting next wave
+        return False
 
     def start_count_to_next_wave(self):
         # self.set_wave_start_variables()
