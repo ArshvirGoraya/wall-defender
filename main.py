@@ -343,6 +343,7 @@ while True:
                     if wave_emitter.current_wave == wave_emitter.final_wave:
                         game_state = WIN
 
+                wave_emitter.set_wave_start_variables()
                 wave_emitter.start_count_to_next_wave()
                 spawn_ammo(random.randint(
                     int(wave_emitter.get_incoming_enemies() / 2),

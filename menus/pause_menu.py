@@ -59,6 +59,12 @@ class PauseMenu():
                 "Pause: esc",
                 pygame.Vector2(self.screen_w/2, self.CONTROLS_Y + (40 * 4))
             ),
+            Text(
+                colors.get_text(),
+                40,
+                "Enter wall: enter",
+                pygame.Vector2(self.screen_w/2, self.CONTROLS_Y + (40 * 5))
+            ),
         )
 
         self.button = pygame.sprite.GroupSingle()

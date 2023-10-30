@@ -28,7 +28,7 @@ class WaveEmitter():
         return self.state == self.IN_WAVE
 
     def start_wave(self):
-        self.set_wave_start_variables()
+        # self.set_wave_start_variables()
         for x in range(0, self.get_incoming_enemies()):
             self.game_components.spawn_enemy()
 
