@@ -14,6 +14,15 @@ from color_schemes import ColorScheme
 class GameComponents():
     # colors: ColorScheme  # Holds colors for different components.
     # screen: pygame.surface.Surface  # Info for where to draw components.
+    INITIAL_SPAWN_AMMO_MIN = 1
+    INITIAL_SPAWN_AMMO_MAX = 10
+
+    INITIAL_BULLET_SPEED = 400
+
+    spawn_ammo_min = INITIAL_SPAWN_AMMO_MIN
+    spawn_ammo_max = INITIAL_SPAWN_AMMO_MAX
+
+    bullet_speed = INITIAL_BULLET_SPEED
 
     def __init__(self, colors: ColorScheme, screen: pygame.surface.Surface):
         self.colors = colors
@@ -79,7 +88,7 @@ class GameComponents():
                 self.screen.get_rect(),
                 # send rect if wall sprite exist or none
                 self.wall.sprite.rect if self.wall.sprite != None else None,
-                randint(1, 10),  # seconds
+                randint(self.spawn_ammo_min, self.spawn_ammo_max),  # seconds
             )
         )
 
@@ -87,7 +96,7 @@ class GameComponents():
     def spawn_bullet(self, bullet_direction: pygame.Vector2) -> None:
         self.bullet.add(
             Bullet(
-                speed=400,
+                speed=self.bullet_speed,
                 color=self.colors.get_player(),
                 player_pos=pygame.Vector2(
                     self.player.sprite.x_pos, self.player.sprite.y_pos),
@@ -96,3 +105,9 @@ class GameComponents():
                 screen=self.screen.get_rect()
             )
         )
+
+    def reset_to_initial(self):
+        self.spawn_ammo_min = self.INITIAL_SPAWN_AMMO_MIN
+        self.spawn_ammo_max = self.INITIAL_SPAWN_AMMO_MAX
+
+        self.bullet_speed = self.INITIAL_BULLET_SPEED

@@ -316,6 +316,7 @@ def restart_game(previous_wave=False):
     else:
         game_components.get_player().reset_to_initial()
         game_components.get_wall().reset_to_initial()
+        game_components.reset_to_initial()
         wave_emitter.reset_to_initial()
         # Spawn ammo at game start:
         game_start()
@@ -355,8 +356,12 @@ def print_stats():
     #       game_components.get_wall().max_health)
     # print(wave_emitter.current_wave, ": player speed = ",
     #       game_components.get_player().speed)
-    print(wave_emitter.current_wave, ": shoot speed = ",
-          game_components.get_player().shoot_wait_millis)
+    # print(wave_emitter.current_wave, ": shoot speed = ",
+    #       game_components.get_player().shoot_wait_millis)
+    # print(wave_emitter.current_wave, ": ammo spawn rate = ",
+    #       game_components.spawn_ammo_min, ", ", game_components.spawn_ammo_max)
+    print(wave_emitter.current_wave, ": bullet speed = ",
+          game_components.bullet_speed)
 
     pass
 
@@ -381,12 +386,12 @@ def upgrade(button):
             game_components.get_player().shoot_wait_millis -= 0.01
 
         case upgrade_menu.ammo_spawn_rate:
-            print("ammo_spawn_rate upgrade!")
+            game_components.spawn_ammo_min += 5
+            game_components.spawn_ammo_max += 5
         ##
 
         case upgrade_menu.speed_bullet:
-            print("speed_bullet upgrade!")
-
+            game_components.bullet_speed += 10
 
         # case upgrade_menu.turret:
         #     pass
