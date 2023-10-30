@@ -20,7 +20,7 @@ class Wall(pygame.sprite.Sprite):
         self.image.fill((self.color))
 
         # Position = middle of screen (horizontal).
-        self.rect = self.image.get_rect(topright=(screen.width / 2, 0))
+        self.rect = self.image.get_rect(midtop=(screen.width / 2, 0))
 
         self.enemy_ref = enemy_reference
         self.screen = screen
