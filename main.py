@@ -14,6 +14,7 @@ from menus.start_menu import StartMenu
 from menus.win_menu import WinMenu
 from menus.pause_menu import PauseMenu
 from menus.fail_menu import FailMenu
+from menus.upgrade_menu import UpgradeMenu
 #
 from ui.health_bar import HealthBar
 #
@@ -58,6 +59,9 @@ fail_menu = FailMenu(screen, colors)
 fail_menu_text = fail_menu.menu
 button_restart_0 = fail_menu.button
 button_restart_last = fail_menu.button_last
+
+upgrade_menu = UpgradeMenu(screen, colors)
+upgrade_menu_title = upgrade_menu.menu
 
 # Background fill with opacity. Can be used in many places.
 bg = pygame.surface.Surface(screen.get_size())
@@ -317,6 +321,39 @@ def restart_game(previous_wave=False):
         game_start()
 
 
+def start_next_wave_count():
+    wave_emitter.start_count_to_next_wave()
+    spawn_ammo(random.randint(
+        int(wave_emitter.get_incoming_enemies() / 2),
+        int(wave_emitter.get_incoming_enemies())))
+
+# UPGRADES ###############################
+
+
+def prompt_upgrade(screen) -> bool:
+    upgrade_menu_title.draw(screen)
+
+    for button in upgrade_menu.buttons:
+        button.update(screen)
+        button.draw(screen)
+
+        if button.sprite.detect_click():
+            upgrade(button)
+            return True
+
+    return False
+
+
+def upgrade(button):
+    match button:
+        case upgrade_menu.speed_up:
+            pass
+        case upgrade_menu.ammo_cap:
+            pass
+        case upgrade_menu.ammo_spawn_rate:
+            pass
+
+
 # CUSTOM EVENTS ###############################
 event_ammo_spawn = pygame.USEREVENT + 1
 # event_enemy_spawn = pygame.USEREVENT + 2
@@ -324,8 +361,11 @@ pygame.time.set_timer(event_ammo_spawn, 1000)  # Emit event on timer.
 # pygame.time.set_timer(event_enemy_spawn, 1000)  # Emit event on timer.
 
 event_start_waves = pygame.USEREVENT + 2
-pygame.time.set_timer(event_start_waves, 10000)  # Emit event on timer.
-
+SKIP_OPENING: bool = True
+if SKIP_OPENING:
+    pygame.time.set_timer(event_start_waves, 10)  # Emit event on timer.
+else:
+    pygame.time.set_timer(event_start_waves, 10000)  # Emit event on timer.
 
 # Game States ###############################
 # Enum: Game States (don't want/need enum import)
@@ -384,9 +424,9 @@ while True:
                     game_state = PAUSE
 
             # TESTING:
-            # elif event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_SPACE:
-            #         game_state = WIN
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game_state = UPGRADE
 
     if game_state == GAME:
 
@@ -401,16 +441,22 @@ while True:
                     if wave_emitter.current_wave == wave_emitter.final_wave:
                         game_state = WIN
 
-                # wave_emitter.set_wave_start_variables()
-                wave_emitter.start_count_to_next_wave()
-                spawn_ammo(random.randint(
-                    int(wave_emitter.get_incoming_enemies() / 2),
-                    int(wave_emitter.get_incoming_enemies())))
+                game_state = UPGRADE
+                # start_next_wave_count()
         else:
             wave_emitter.update_timer(delta)  # Spawns waves.
 
     elif game_state == UPGRADE:
-        pass
+        draw_game(screen)
+        screen.blit(bg, bg.get_rect())
+
+        upgrade_picked = prompt_upgrade(screen)
+
+        if upgrade_picked:
+            wave_emitter.set_wave_start_variables()
+            start_next_wave_count()
+            # save variables AFTER upgrading.
+            game_state = GAME
 
     elif game_state == PAUSE:
         draw_game(screen)
