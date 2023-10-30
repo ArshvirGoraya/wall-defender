@@ -64,6 +64,8 @@ class Player(pygame.sprite.Sprite):
             self.shoot_wait_current -= delta
 
     def wall_check(self):
+        if self.wall_ref.sprite == None:
+            return
         if self.move_state == self.IN_WALL:
             return
 

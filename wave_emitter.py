@@ -22,7 +22,7 @@ class WaveEmitter():
 
     def __init__(self, game_components) -> None:
         self.game_components = game_components
-        # self.set_wave_start_variables()
+        self.set_wave_start_variables()
 
     def is_in_wave(self) -> bool:
         return self.state == self.IN_WAVE
@@ -47,6 +47,7 @@ class WaveEmitter():
             self.current_wave += 1  # Make sure this is below start_wave!
 
     def start_count_to_next_wave(self):
+        self.set_wave_start_variables()
         # print("counting to next wave!")
         self.current_time = self.COUNT_DOWN
         self.state = self.WAIT_WAVE

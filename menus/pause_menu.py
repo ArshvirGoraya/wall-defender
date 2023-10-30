@@ -62,7 +62,7 @@ class PauseMenu():
             Text(
                 colors.get_text(),
                 40,
-                "Enter wall: enter",
+                "Enter/exit wall: enter",
                 pygame.Vector2(self.screen_w/2, self.CONTROLS_Y + (40 * 5))
             ),
         )
