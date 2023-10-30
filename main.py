@@ -420,7 +420,7 @@ event_start_waves = pygame.USEREVENT + 2
 # For testing:
 
 TEST_WAVE: bool = False
-SKIP_OPENING: bool = False
+SKIP_OPENING: bool = True
 
 if TEST_WAVE:
     if not SKIP_OPENING:
@@ -529,6 +529,7 @@ while True:
                 if not in_endless_mode:
                     if wave_emitter.current_wave == wave_emitter.final_wave:
                         game_state = WIN
+                        continue
 
                 game_state = UPGRADE
                 # start_next_wave_count()
