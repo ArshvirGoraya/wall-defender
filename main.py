@@ -1,5 +1,6 @@
 import pygame
 import random
+import sys
 # import array as arr  # Incase: don't want to use lists.
 import time
 from math import ceil
@@ -478,7 +479,8 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            quit()  # Exits while loop immediately.
+            sys.exit()
+            # quit()  # Exits while loop immediately.
 
         # When in game:
         if game_state == GAME:
