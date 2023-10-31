@@ -420,7 +420,7 @@ event_start_waves = pygame.USEREVENT + 2
 # For testing:
 
 TEST_WAVE: bool = False
-SKIP_OPENING: bool = True
+SKIP_OPENING: bool = False
 
 if TEST_WAVE:
     if not SKIP_OPENING:
