@@ -47,6 +47,7 @@ wave_emitter = WaveEmitter(game_components)
 start_menu = StartMenu(screen, colors)
 start_menu_text = start_menu.menu
 button_start_game = start_menu.button_start_game
+button_start_exit = start_menu.button_exit
 
 win_menu = WinMenu(screen, colors)
 win_menu_text = win_menu.menu
@@ -55,6 +56,7 @@ button_endless = win_menu.button
 pause_menu = PauseMenu(screen, colors)
 pause_menu_text = pause_menu.menu
 button_resume = pause_menu.button
+button_pause_exit = pause_menu.button_exit
 
 fail_menu = FailMenu(screen, colors)
 fail_menu_text = fail_menu.menu
@@ -520,7 +522,8 @@ while True:
             # TESTING:
             # elif event.type == pygame.KEYDOWN:
             #     if event.key == pygame.K_SPACE:
-            #         game_state = UPGRADE
+            #         pygame.event.post(pygame.event.Event(pygame.QUIT))
+                    # game_state = UPGRADE
 
     if game_state == GAME:
         draw_game(screen)
@@ -567,6 +570,12 @@ while True:
         if button_resume.sprite.detect_click():
             game_state = unpause_game_state
 
+        button_pause_exit.update(screen)
+        button_pause_exit.draw(screen)
+
+        if button_pause_exit.sprite.detect_click():
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
+
     elif game_state == WIN:
         draw_game(screen)
         screen.blit(bg, bg.get_rect())
@@ -606,6 +615,12 @@ while True:
         if button_start_game.sprite.detect_click():
             game_state = GAME
             game_start()
+
+        button_start_exit.update(screen)
+        button_start_exit.draw(screen)
+
+        if button_start_exit.sprite.detect_click():
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     pygame.display.update()
     # clock.tick(60)  # FPS limited

@@ -81,3 +81,17 @@ class StartMenu():
                 pygame.Vector2(self.screen_w/2, self.screen_h/2)
             )
         )
+        self.button_exit = pygame.sprite.GroupSingle()
+        self.button_exit.add(
+            Button(
+                colors.get_button_text(),
+                colors.get_button_bg(),
+                colors.get_button_hover(),
+                colors.get_button_pressed(),
+                colors.get_button_disabled(),
+                False,
+                "Quit",
+                40,
+                pygame.Vector2(self.screen_w/2, self.screen_h/2 + 50)
+            )
+        )
