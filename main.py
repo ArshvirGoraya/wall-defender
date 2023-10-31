@@ -196,6 +196,7 @@ def draw_game(screen: pygame.surface.Surface) -> None:
     game_components.wall.draw(screen)
     game_components.enemy.draw(screen)
     game_components.ammo.draw(screen)
+    game_components.turret.draw(screen)
     game_components.player.draw(screen)
     game_components.bullet.draw(screen)
     draw_ui()
@@ -403,7 +404,8 @@ def upgrade(button):
             game_components.bullet_speed += 50
 
         case upgrade_menu.turret:
-            game_components.spawn_turret(screen_w, screen_h)
+            game_components.spawn_turret(
+                colors.get_player(), screen_w, screen_h)
 # TURRETS ###############################
 
 

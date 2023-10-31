@@ -4,14 +4,14 @@ from random import randint
 
 class Turret(pygame.sprite.Sprite):
 
-    def __init__(self, wait_time, screen_width, screen_height, game_components_reference) -> None:
+    def __init__(self, color, wait_time, screen_width, screen_height, game_components_reference) -> None:
         super().__init__()
 
         self.wait_time = wait_time
 
-        self.image = pygame.Surface((2, 2))
-        self.image.fill(("WHITE"))
-        # self.image.set_alpha(0)
+        self.image = pygame.Surface((10, 10))
+        self.image.fill(color)
+        self.image.set_alpha(50)
 
         # print("screen height: ", int(screen_height))
 
@@ -31,7 +31,7 @@ class Turret(pygame.sprite.Sprite):
             self.current_time = self.wait_time
 
     def shoot(self):
-        print("SHOOT!")
+        # print("SHOOT!")
         self.game_components.spawn_bullet(
             pygame.Vector2(-1, 0),
             pygame.Vector2(self.x_pos, self.y_pos),
